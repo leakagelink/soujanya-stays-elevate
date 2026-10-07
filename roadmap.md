@@ -9,13 +9,14 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] Experiences section
 - [x] Booking form with nights + 18% GST total calculation (display only, nothing saved)
 
-## Phase 1 — Foundation: data + accounts (NEXT)
-- [ ] Enable Lovable Cloud (database, storage, logins)
-- [ ] Schema: properties, room types, rooms, seasons/rates, guests, bookings, booking status
+## Phase 1 — Foundation: data + accounts (MOSTLY DONE)
+- [x] Enable Lovable Cloud (database, storage, logins)
+- [~] Schema (room types + bookings done; seasons/rates later): properties, room types, rooms, seasons/rates, guests, bookings, booking status
 - [ ] Replace placeholder rooms/prices/experiences with real resort data
 - [ ] Official logo + brand assets
-- [ ] Guest sign up / sign in
-- [ ] Save real bookings from the website + email confirmation
+- [x] Guest sign up / sign in
+- [x] Save real bookings from the website + My Bookings page
+- [ ] Booking confirmation email (needs email domain setup)
 
 ## Phase 2 — Front desk / Property management
 - [ ] Admin + staff logins with roles (admin, front desk, kitchen, housekeeping, finance)
@@ -59,4 +60,4 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - Official logo file
 - Real room names, prices, seasons, experiences, contact details
 - Which payment gateway to connect
-- Whether to enable Lovable Cloud now (needed before anything saves)
+

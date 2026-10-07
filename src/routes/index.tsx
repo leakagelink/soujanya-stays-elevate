@@ -115,18 +115,24 @@ function Index() {
             <h2 className="mt-2 font-display text-5xl text-primary">Book your stay</h2>
             {done ? (
               <div className="mt-8 border border-gold bg-card p-8">
-                <h3 className="font-display text-3xl text-primary">Request received</h3>
-                <p className="mt-2 text-muted-foreground">Our concierge will confirm your {room} for {nights} night(s) shortly.</p>
+                <h3 className="font-display text-3xl text-primary">Booking request saved</h3>
+                <p className="mt-2 text-muted-foreground">Reference <b>{done.slice(0, 8).toUpperCase()}</b> — your {room} for {nights} night(s). Our concierge will confirm shortly.</p>
+                <Link to="/my-bookings" className="mt-4 inline-block text-sm text-gold underline">View my bookings</Link>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); if (nights > 0) setDone(true); }} className="mt-8 grid gap-5 sm:grid-cols-2">
-                <label className="text-xs tracking-widest">CHECK-IN<input required type="date" value={ci} onChange={(e) => setCi(e.target.value)} className="mt-2 w-full border border-input bg-card p-3" /></label>
-                <label className="text-xs tracking-widest">CHECK-OUT<input required type="date" value={co} min={ci} onChange={(e) => setCo(e.target.value)} className="mt-2 w-full border border-input bg-card p-3" /></label>
+              <form onSubmit={submit} className="mt-8 grid gap-5 sm:grid-cols-2">
+                <label className="text-xs tracking-widest">CHECK-IN<input required type="date" min={today} value={ci} onChange={(e) => setCi(e.target.value)} className="mt-2 w-full border border-input bg-card p-3" /></label>
+                <label className="text-xs tracking-widest">CHECK-OUT<input required type="date" value={co} min={ci || today} onChange={(e) => setCo(e.target.value)} className="mt-2 w-full border border-input bg-card p-3" /></label>
                 <label className="text-xs tracking-widest">ROOM<select value={room} onChange={(e) => setRoom(e.target.value)} className="mt-2 w-full border border-input bg-card p-3">{rooms.map((x) => <option key={x.name}>{x.name}</option>)}</select></label>
                 <label className="text-xs tracking-widest">GUESTS<input type="number" min={1} max={r.guests} value={guests} onChange={(e) => setGuests(+e.target.value)} className="mt-2 w-full border border-input bg-card p-3" /></label>
-                <input required placeholder="Full name" className="border border-input bg-card p-3" />
-                <input required type="email" placeholder="Email" className="border border-input bg-card p-3" />
-                <button className="bg-primary py-4 text-sm tracking-widest text-primary-foreground sm:col-span-2">REQUEST BOOKING</button>
+                <input required placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} className="border border-input bg-card p-3" />
+                <input required type="tel" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="border border-input bg-card p-3" />
+                {err && <p className="text-sm text-destructive sm:col-span-2">{err}</p>}
+                {user ? (
+                  <button disabled={busy || nights <= 0} className="bg-primary py-4 text-sm tracking-widest text-primary-foreground disabled:opacity-60 sm:col-span-2">{busy ? "SAVING…" : "REQUEST BOOKING"}</button>
+                ) : (
+                  <Link to="/auth" className="bg-primary py-4 text-center text-sm tracking-widest text-primary-foreground sm:col-span-2">SIGN IN TO BOOK</Link>
+                )}
               </form>
             )}
           </div>
