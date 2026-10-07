@@ -18,14 +18,19 @@ export type Database = {
         Row: {
           check_in: string
           check_out: string
+          checked_in_at: string | null
+          checked_out_at: string | null
           created_at: string
           gst: number
           guest_name: string
           guests: number
           id: string
           nights: number
+          notes: string
           phone: string
+          room_number: string
           room_type_id: string
+          source: string
           status: string
           subtotal: number
           total: number
@@ -34,14 +39,19 @@ export type Database = {
         Insert: {
           check_in: string
           check_out: string
+          checked_in_at?: string | null
+          checked_out_at?: string | null
           created_at?: string
           gst: number
           guest_name: string
           guests?: number
           id?: string
           nights: number
+          notes?: string
           phone?: string
+          room_number?: string
           room_type_id: string
+          source?: string
           status?: string
           subtotal: number
           total: number
@@ -50,14 +60,19 @@ export type Database = {
         Update: {
           check_in?: string
           check_out?: string
+          checked_in_at?: string | null
+          checked_out_at?: string | null
           created_at?: string
           gst?: number
           guest_name?: string
           guests?: number
           id?: string
           nights?: number
+          notes?: string
           phone?: string
+          room_number?: string
           room_type_id?: string
+          source?: string
           status?: string
           subtotal?: number
           total?: number
@@ -69,6 +84,41 @@ export type Database = {
             columns: ["room_type_id"]
             isOneToOne: false
             referencedRelation: "room_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folio_charges: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          created_by?: string
+          description: string
+          id?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folio_charges_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -133,15 +183,41 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_first_admin: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "front_desk" | "kitchen" | "housekeeping" | "finance"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -268,6 +344,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "front_desk", "kitchen", "housekeeping", "finance"],
+    },
   },
 } as const
