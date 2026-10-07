@@ -29,7 +29,7 @@ function Index() {
   const [ci, setCi] = useState("");
   const [co, setCo] = useState("");
   const [guests, setGuests] = useState(2);
-  const [room, setRoom] = useState(rooms[0].name);
+  const [room, setRoom] = useState("Forest Suite");
   const [done, setDone] = useState(false);
   const nights = ci && co ? Math.max(0, (new Date(co).getTime() - new Date(ci).getTime()) / 864e5) : 0;
   const r = rooms.find((x) => x.name === room)!;
