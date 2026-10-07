@@ -1,6 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { roomsQuery, inr } from "@/lib/rooms";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -13,28 +17,42 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(roomsQuery),
   component: Index,
 });
 
-const rooms = [
-  { name: "Forest Suite", price: 12500, guests: 2, desc: "Canopy views, king bed, rain shower and private balcony." },
-  { name: "Pool Villa", price: 24000, guests: 3, desc: "Private plunge pool, sundeck and outdoor bath." },
-  { name: "Hillside Family Cottage", price: 18500, guests: 5, desc: "Two bedrooms, living lounge and garden sit-out." },
-  { name: "Presidential Retreat", price: 48000, guests: 4, desc: "Infinity pool, butler service and valley panorama." },
-];
 const experiences = ["Sunrise Valley Trek", "Ayurvedic Spa Rituals", "Candlelight Poolside Dinner", "Organic Farm-to-Table Cooking", "Bonfire & Folk Music", "Guided Birding Walk"];
-const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
 
 function Index() {
+  const { data: dbRooms } = useSuspenseQuery(roomsQuery);
+  const rooms = dbRooms.map((x) => ({ id: x.id, name: x.name, price: x.price_per_night, guests: x.max_guests, desc: x.description }));
+  const { user } = useAuth();
   const [ci, setCi] = useState("");
   const [co, setCo] = useState("");
   const [guests, setGuests] = useState(2);
-  const [room, setRoom] = useState("Forest Suite");
-  const [done, setDone] = useState(false);
+  const [room, setRoom] = useState(rooms[0]?.name ?? "");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [done, setDone] = useState<string | null>(null);
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
   const nights = ci && co ? Math.max(0, (new Date(co).getTime() - new Date(ci).getTime()) / 864e5) : 0;
-  const r = rooms.find((x) => x.name === room)!;
+  const r = rooms.find((x) => x.name === room) ?? rooms[0];
   const sub = nights * r.price;
   const tax = Math.round(sub * 0.18);
+  const today = new Date().toISOString().slice(0, 10);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user || nights <= 0) return;
+    setBusy(true); setErr("");
+    const { data, error } = await supabase.from("bookings").insert({
+      user_id: user.id, room_type_id: r.id, guest_name: name, phone, check_in: ci, check_out: co, guests,
+      nights: 0, subtotal: 0, gst: 0, total: 0,
+    }).select("id").single();
+    setBusy(false);
+    if (error) setErr(error.message); else setDone(data.id);
+  }
 
   return (
     <div className="font-sans">
@@ -43,8 +61,9 @@ function Index() {
           <div className="font-display text-2xl tracking-[0.3em]">SOUJANYA STAYS</div>
           <div className="text-[10px] tracking-[0.4em] text-accent">STAY THE WAY YOU LIKE</div>
         </div>
-        <nav className="hidden gap-8 text-sm tracking-widest md:flex">
-          <a href="#rooms">ROOMS</a><a href="#experiences">EXPERIENCES</a><a href="#book">BOOK</a>
+        <nav className="flex gap-6 text-xs tracking-widest md:gap-8 md:text-sm">
+          <a href="#rooms" className="hidden md:inline">ROOMS</a><a href="#experiences" className="hidden md:inline">EXPERIENCES</a><a href="#book" className="hidden md:inline">BOOK</a>
+          {user ? <Link to="/my-bookings">MY BOOKINGS</Link> : <Link to="/auth">SIGN IN</Link>}
         </nav>
       </header>
 
