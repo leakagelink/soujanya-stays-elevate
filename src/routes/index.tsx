@@ -37,7 +37,7 @@ function Index() {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const nights = ci && co ? Math.max(0, (new Date(co).getTime() - new Date(ci).getTime()) / 864e5) : 0;
-  const r = rooms.find((x) => x.name === room) ?? rooms[0];
+  const r = (rooms.find((x) => x.name === room) ?? rooms[0])!;
   const sub = nights * r.price;
   const tax = Math.round(sub * 0.18);
   const today = new Date().toISOString().slice(0, 10);
