@@ -1,0 +1,3 @@
+UPDATE public.room_types SET name='Forest Suite', description='Canopy views, king bed, rain shower and private balcony.', price_per_night=12500, max_guests=2 WHERE sort_order=1;
+UPDATE public.room_types SET name='Pool Villa', description='Private plunge pool, sundeck and outdoor bath.', price_per_night=24000, max_guests=3 WHERE sort_order=2;
+UPDATE public.room_types SET name='Presidential Retreat', description='Infinity pool, butler service and valley panorama.', price_per_night=48000, max_guests=4 WHERE sort_order=4;
