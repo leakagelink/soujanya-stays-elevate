@@ -11,3 +11,4 @@
 
 - Keep homepage visual styling scoped to `.resort-home` and reusable reveal behavior in `src/components/home` so guest-site redesigns do not change staff panels.
 - Homepage room names, rates and guest limits come from the existing rooms query; bundled concept photography is presentation only, never resort inventory data.
+- Prebundle React, React DOM and Radix Slot together in Vite to prevent late dependency discovery from mixing React instances in an open preview.
