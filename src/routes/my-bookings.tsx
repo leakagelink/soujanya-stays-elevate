@@ -32,7 +32,7 @@ function MyBookings() {
 
   async function cancel(id: string) {
     if (!confirm("Cancel this booking request?")) return;
-    await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id);
+    await supabase.from("bookings").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("id", id);
     load();
   }
 

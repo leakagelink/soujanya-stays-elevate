@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
+import { Route as InvoiceIdRouteImport } from './routes/invoice.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const MyBookingsRoute = MyBookingsRouteImport.update({
   path: '/my-bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvoiceIdRoute = InvoiceIdRouteImport.update({
+  id: '/invoice/$id',
+  path: '/invoice/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/my-bookings'
+  fullPaths: '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/my-bookings'
-  id: '__root__' | '/' | '/admin' | '/auth' | '/my-bookings'
+  to: '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
+  id: '__root__' | '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   MyBookingsRoute: typeof MyBookingsRoute
+  InvoiceIdRoute: typeof InvoiceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invoice/$id': {
+      id: '/invoice/$id'
+      path: '/invoice/$id'
+      fullPath: '/invoice/$id'
+      preLoaderRoute: typeof InvoiceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   MyBookingsRoute: MyBookingsRoute,
+  InvoiceIdRoute: InvoiceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
