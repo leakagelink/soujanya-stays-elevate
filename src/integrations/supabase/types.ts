@@ -250,6 +250,48 @@ export type Database = {
           },
         ]
       }
+      expenses: {
+        Row: {
+          amount: number
+          bill_no: string
+          category: string
+          created_at: string
+          created_by: string
+          date: string
+          description: string
+          gst: number
+          id: string
+          paid: boolean
+          vendor: string
+        }
+        Insert: {
+          amount: number
+          bill_no?: string
+          category: string
+          created_at?: string
+          created_by: string
+          date?: string
+          description?: string
+          gst?: number
+          id?: string
+          paid?: boolean
+          vendor?: string
+        }
+        Update: {
+          amount?: number
+          bill_no?: string
+          category?: string
+          created_at?: string
+          created_by?: string
+          date?: string
+          description?: string
+          gst?: number
+          id?: string
+          paid?: boolean
+          vendor?: string
+        }
+        Relationships: []
+      }
       folio_charges: {
         Row: {
           amount: number
@@ -734,6 +776,7 @@ export type Database = {
         }
         Returns: string
       }
+      can_finance: { Args: { _user_id: string }; Returns: boolean }
       can_housekeeping: { Args: { _user_id: string }; Returns: boolean }
       can_kitchen: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }
