@@ -45,7 +45,7 @@ function Finance() {
   const [pays, setPays] = useState<{ amount: number; kind: string; method: string; created_at: string }[]>([]);
   const [folio, setFolio] = useState<{ description: string; amount: number; created_at: string }[]>([]);
   const [exps, setExps] = useState<Exp[]>([]);
-  const [ne, setNe] = useState({ date: iso(now), category: CATS[0], vendor: "", description: "", amount: "", gst: "", bill_no: "", paid: true });
+  const [ne, setNe] = useState({ date: iso(now), category: CATS[0] as string, vendor: "", description: "", amount: "", gst: "", bill_no: "", paid: true });
 
   async function load() {
     const end = to + "T23:59:59";
@@ -79,7 +79,7 @@ function Finance() {
 
   async function addExp() {
     const amount = parseInt(ne.amount); if (!amount || amount < 1 || !user) return alert("Enter an amount");
-    const { error } = await supabase.from("expenses").insert({ date: ne.date, category: ne.category, vendor: ne.vendor.trim(), description: ne.description.trim(), amount, gst: parseInt(ne.gst) || 0, bill_no: ne.bill_no.trim(), paid: ne.paid, created_by: user.id });
+    const { error } = await supabase.from("expenses").insert({ date: ne.date, category: ne.category ?? "Other", vendor: ne.vendor.trim(), description: ne.description.trim(), amount, gst: parseInt(ne.gst) || 0, bill_no: ne.bill_no.trim(), paid: ne.paid, created_by: user.id });
     if (error) return alert(error.message);
     setNe({ ...ne, vendor: "", description: "", amount: "", gst: "", bill_no: "" }); load();
   }
