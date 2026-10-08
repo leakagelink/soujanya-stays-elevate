@@ -227,6 +227,7 @@ export type Database = {
           id_front_path: string | null
           id_number: string
           id_type: string
+          id_verification: string
           nationality: string
           nights: number
           notes: string
@@ -267,6 +268,7 @@ export type Database = {
           id_front_path?: string | null
           id_number?: string
           id_type?: string
+          id_verification?: string
           nationality?: string
           nights: number
           notes?: string
@@ -307,6 +309,7 @@ export type Database = {
           id_front_path?: string | null
           id_number?: string
           id_type?: string
+          id_verification?: string
           nationality?: string
           nights?: number
           notes?: string
@@ -420,6 +423,47 @@ export type Database = {
         }
         Relationships: []
       }
+      channel_reservations: {
+        Row: {
+          booking_id: string | null
+          channel: string
+          created_at: string
+          error: string
+          external_id: string
+          id: string
+          payload: Json
+          status: string
+        }
+        Insert: {
+          booking_id?: string | null
+          channel: string
+          created_at?: string
+          error?: string
+          external_id: string
+          id?: string
+          payload?: Json
+          status?: string
+        }
+        Update: {
+          booking_id?: string | null
+          channel?: string
+          created_at?: string
+          error?: string
+          external_id?: string
+          id?: string
+          payload?: Json
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_reservations_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           active: boolean
@@ -461,6 +505,47 @@ export type Database = {
           phone?: string
         }
         Relationships: []
+      }
+      consents: {
+        Row: {
+          accepted: boolean
+          booking_id: string | null
+          created_at: string
+          id: string
+          policy: string
+          recorded_by: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          accepted?: boolean
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          policy: string
+          recorded_by?: string
+          user_id: string
+          version: string
+        }
+        Update: {
+          accepted?: boolean
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          policy?: string
+          recorded_by?: string
+          user_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       deposits: {
         Row: {
@@ -514,6 +599,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      document_access_log: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          path: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          path: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          path?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       events: {
         Row: {
@@ -852,48 +961,81 @@ export type Database = {
       }
       night_audits: {
         Row: {
+          activity_revenue: number
           arrivals: number
           audit_date: string
+          closed_at: string | null
+          closed_by: string | null
           collected: number
           created_at: string
           departures: number
+          discrepancies: string
           extras_revenue: number
+          food_revenue: number
           id: string
           in_house: number
           no_shows: number
           occupied_rooms: number
+          other_revenue: number
+          outstanding: number
+          payments: number
+          refunds: number
           room_revenue: number
           run_by: string
+          status: string
+          taxes: number
           total_rooms: number
         }
         Insert: {
+          activity_revenue?: number
           arrivals: number
           audit_date: string
+          closed_at?: string | null
+          closed_by?: string | null
           collected: number
           created_at?: string
           departures: number
+          discrepancies?: string
           extras_revenue: number
+          food_revenue?: number
           id?: string
           in_house: number
           no_shows: number
           occupied_rooms: number
+          other_revenue?: number
+          outstanding?: number
+          payments?: number
+          refunds?: number
           room_revenue: number
           run_by: string
+          status?: string
+          taxes?: number
           total_rooms: number
         }
         Update: {
+          activity_revenue?: number
           arrivals?: number
           audit_date?: string
+          closed_at?: string | null
+          closed_by?: string | null
           collected?: number
           created_at?: string
           departures?: number
+          discrepancies?: string
           extras_revenue?: number
+          food_revenue?: number
           id?: string
           in_house?: number
           no_shows?: number
           occupied_rooms?: number
+          other_revenue?: number
+          outstanding?: number
+          payments?: number
+          refunds?: number
           room_revenue?: number
           run_by?: string
+          status?: string
+          taxes?: number
           total_rooms?: number
         }
         Relationships: []
@@ -1527,6 +1669,7 @@ export type Database = {
         Args: { _counted: number; _notes: string; _session_id: string }
         Returns: number
       }
+      close_night_audit: { Args: { _date: string }; Returns: undefined }
       grant_staff_role: {
         Args: { _email: string; _role: Database["public"]["Enums"]["app_role"] }
         Returns: undefined
@@ -1547,6 +1690,10 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }[]
+      }
+      log_doc_access: {
+        Args: { _booking_id: string; _path: string }
+        Returns: undefined
       }
       modify_booking: {
         Args: {
