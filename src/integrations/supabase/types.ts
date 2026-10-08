@@ -16,19 +16,32 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          address: string
+          adults: number | null
           cancelled_at: string | null
           check_in: string
           check_out: string
           checked_in_at: string | null
           checked_out_at: string | null
+          children: number | null
+          coming_from: string
           created_at: string
+          email: string
+          going_to: string
           gst: number
           guest_name: string
+          guest_photo_path: string | null
           guests: number
           id: string
+          id_back_path: string | null
+          id_front_path: string | null
+          id_number: string
+          id_type: string
+          nationality: string
           nights: number
           notes: string
           phone: string
+          purpose: string
           room_number: string
           room_type_id: string
           source: string
@@ -36,21 +49,36 @@ export type Database = {
           subtotal: number
           total: number
           user_id: string
+          vehicle_number: string
+          visa_number: string
         }
         Insert: {
+          address?: string
+          adults?: number | null
           cancelled_at?: string | null
           check_in: string
           check_out: string
           checked_in_at?: string | null
           checked_out_at?: string | null
+          children?: number | null
+          coming_from?: string
           created_at?: string
+          email?: string
+          going_to?: string
           gst: number
           guest_name: string
+          guest_photo_path?: string | null
           guests?: number
           id?: string
+          id_back_path?: string | null
+          id_front_path?: string | null
+          id_number?: string
+          id_type?: string
+          nationality?: string
           nights: number
           notes?: string
           phone?: string
+          purpose?: string
           room_number?: string
           room_type_id: string
           source?: string
@@ -58,21 +86,36 @@ export type Database = {
           subtotal: number
           total: number
           user_id: string
+          vehicle_number?: string
+          visa_number?: string
         }
         Update: {
+          address?: string
+          adults?: number | null
           cancelled_at?: string | null
           check_in?: string
           check_out?: string
           checked_in_at?: string | null
           checked_out_at?: string | null
+          children?: number | null
+          coming_from?: string
           created_at?: string
+          email?: string
+          going_to?: string
           gst?: number
           guest_name?: string
+          guest_photo_path?: string | null
           guests?: number
           id?: string
+          id_back_path?: string | null
+          id_front_path?: string | null
+          id_number?: string
+          id_type?: string
+          nationality?: string
           nights?: number
           notes?: string
           phone?: string
+          purpose?: string
           room_number?: string
           room_type_id?: string
           source?: string
@@ -80,6 +123,8 @@ export type Database = {
           subtotal?: number
           total?: number
           user_id?: string
+          vehicle_number?: string
+          visa_number?: string
         }
         Relationships: [
           {
