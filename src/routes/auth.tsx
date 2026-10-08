@@ -2,6 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
+
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -47,7 +50,10 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary px-6">
       <div className="w-full max-w-md bg-background p-10">
-        <Link to="/" className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</Link>
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="Soujanya Stays logo" className="h-12 w-12 rounded-full object-cover" />
+          <span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span>
+        </Link>
         <h1 className="mt-6 font-display text-4xl text-primary">{mode === "in" ? "Welcome back" : "Create account"}</h1>
         <button onClick={google} className="mt-8 w-full border border-primary py-3 text-sm tracking-widest text-primary hover:bg-primary hover:text-primary-foreground">CONTINUE WITH GOOGLE</button>
         <div className="my-6 text-center text-xs tracking-widest text-muted-foreground">OR</div>
