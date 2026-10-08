@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/rooms";
 import { advanceDue, refundDue } from "@/lib/policy";
+import { CheckInForm } from "@/components/CheckInForm";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/admin")({
 type Booking = {
   id: string; user_id: string; guest_name: string; phone: string; check_in: string; check_out: string;
   nights: number; guests: number; total: number; status: string; notes: string; room_number: string;
-  room_type_id: string; source: string; cancelled_at: string | null; room_types: { name: string } | null;
+  room_type_id: string; source: string; cancelled_at: string | null; email: string; address: string; nationality: string; id_type: string; id_number: string; guest_photo_path: string | null; id_front_path: string | null; id_back_path: string | null; room_types: { name: string } | null;
 };
 type Room = { id: string; name: string; price_per_night: number; total_rooms: number; max_guests: number };
 type Charge = { id: string; description: string; amount: number };
@@ -114,6 +115,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
   const [filter, setFilter] = useState<"arrivals" | "inhouse" | "departures" | "all">("arrivals");
   const [open, setOpen] = useState<string | null>(null);
   const [walkin, setWalkin] = useState(false);
+  const [checkin, setCheckin] = useState<Booking | null>(null);
   const t = today();
   const list = bookings.filter((b) =>
     filter === "arrivals" ? b.check_in === t && (b.status === "pending" || b.status === "confirmed")
@@ -144,6 +146,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
         ))}
         <button onClick={() => setWalkin(!walkin)} className="ml-auto bg-gold px-4 py-2 text-xs tracking-widest text-primary">+ WALK-IN</button>
       </div>
+      {checkin && <CheckInForm booking={checkin} onClose={() => setCheckin(null)} onDone={() => { setCheckin(null); reload(); }} />}
       {walkin && <WalkIn rooms={rooms} done={() => { setWalkin(false); reload(); }} />}
       {list.length === 0 ? <p className="mt-6 text-muted-foreground">Nothing here.</p> : (
         <ul className="mt-4 grid gap-3">
@@ -159,7 +162,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
                   <span className="mr-2 text-gold">{inr(b.total)}</span>
                   {b.status === "pending" && <Btn onClick={() => update(b.id, { status: "confirmed" })}>Confirm</Btn>}
                   {(b.status === "pending" || b.status === "confirmed") && <Btn onClick={() => setCheckin(b)}>Check in</Btn>}
-                  {b.status !== "pending" && b.status !== "confirmed" && b.id_number && <Btn onClick={() => setCheckin(b)}>Guest ID</Btn>}
+                  {b.status === "checked_in" && <Btn onClick={() => setCheckin(b)}>Guest ID</Btn>}
                   {b.status === "checked_in" && <Btn onClick={() => update(b.id, { status: "checked_out", checked_out_at: new Date().toISOString() })}>Check out</Btn>}
                   {(b.status === "pending" || b.status === "confirmed") && <Btn danger onClick={() => confirm("Cancel booking?") && update(b.id, { status: "cancelled", cancelled_at: new Date().toISOString() })}>Cancel</Btn>}
                   <Btn onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Close" : "Folio & notes"}</Btn>
