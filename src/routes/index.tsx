@@ -2,6 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero.jpg";
+import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
+
+const logo = logoAsset.url;
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { roomsQuery, inr } from "@/lib/rooms";
@@ -14,7 +17,9 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Soujanya Stays — Stay The Way You Like" },
       { property: "og:description", content: "Luxury villas, suites and experiences in the heart of nature." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://resort.socilet.one/og-image.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://resort.socilet.one/og-image.png" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(roomsQuery),
@@ -57,9 +62,12 @@ function Index() {
   return (
     <div className="font-sans">
       <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-6 py-5 text-ivory md:px-12">
-        <div>
-          <div className="font-display text-2xl tracking-[0.3em]">SOUJANYA STAYS</div>
-          <div className="text-[10px] tracking-[0.4em] text-accent">STAY THE WAY YOU LIKE</div>
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="Soujanya Stays logo" className="h-12 w-12 rounded-full object-cover" />
+          <div>
+            <div className="font-display text-2xl tracking-[0.3em]">SOUJANYA STAYS</div>
+            <div className="text-[10px] tracking-[0.4em] text-accent">STAY THE WAY YOU LIKE</div>
+          </div>
         </div>
         <nav className="flex gap-6 text-xs tracking-widest md:gap-8 md:text-sm">
           <a href="#rooms" className="hidden md:inline">ROOMS</a><a href="#experiences" className="hidden md:inline">EXPERIENCES</a><a href="#book" className="hidden md:inline">BOOK</a>
@@ -148,7 +156,10 @@ function Index() {
         </div>
       </section>
 
-      <footer className="bg-primary px-6 py-10 text-center text-xs tracking-[0.3em] text-accent md:px-12">© SOUJANYA STAYS · STAY THE WAY YOU LIKE</footer>
+      <footer className="bg-primary px-6 py-10 text-center text-xs tracking-[0.3em] text-accent md:px-12">
+        <img src={logo} alt="Soujanya Stays logo" className="mx-auto mb-4 h-16 w-16 rounded-full object-cover" />
+        © SOUJANYA STAYS · STAY THE WAY YOU LIKE
+      </footer>
     </div>
   );
 }
