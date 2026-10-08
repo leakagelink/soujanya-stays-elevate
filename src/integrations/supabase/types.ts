@@ -462,6 +462,47 @@ export type Database = {
           },
         ]
       }
+      ingredients: {
+        Row: {
+          cost_per_unit: number
+          created_at: string
+          id: string
+          min_stock: number
+          name: string
+          stock: number
+          supplier_id: string | null
+          unit: string
+        }
+        Insert: {
+          cost_per_unit?: number
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name: string
+          stock?: number
+          supplier_id?: string | null
+          unit?: string
+        }
+        Update: {
+          cost_per_unit?: number
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name?: string
+          stock?: number
+          supplier_id?: string | null
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredients_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leave_requests: {
         Row: {
           created_at: string
@@ -733,6 +774,42 @@ export type Database = {
           },
         ]
       }
+      recipe_items: {
+        Row: {
+          id: string
+          ingredient_id: string
+          menu_item_id: string
+          qty: number
+        }
+        Insert: {
+          id?: string
+          ingredient_id: string
+          menu_item_id: string
+          qty: number
+        }
+        Update: {
+          id?: string
+          ingredient_id?: string
+          menu_item_id?: string
+          qty?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_items_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resort_settings: {
         Row: {
           early_checkin_fee: number
@@ -760,6 +837,33 @@ export type Database = {
           late_checkout_until?: string
           security_deposit?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      restaurant_tables: {
+        Row: {
+          area: string
+          created_at: string
+          id: string
+          number: string
+          seats: number
+          status: string
+        }
+        Insert: {
+          area?: string
+          created_at?: string
+          id?: string
+          number: string
+          seats?: number
+          status?: string
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          id?: string
+          number?: string
+          seats?: number
+          status?: string
         }
         Relationships: []
       }
@@ -929,6 +1033,143 @@ export type Database = {
         }
         Relationships: []
       }
+      stock_moves: {
+        Row: {
+          cost: number
+          created_at: string
+          created_by: string | null
+          id: string
+          ingredient_id: string
+          kind: string
+          note: string
+          qty: number
+          supplier_id: string | null
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id: string
+          kind: string
+          note?: string
+          qty: number
+          supplier_id?: string | null
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredient_id?: string
+          kind?: string
+          note?: string
+          qty?: number
+          supplier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_moves_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_moves_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          gstin: string
+          id: string
+          name: string
+          notes: string
+          phone: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          gstin?: string
+          id?: string
+          name: string
+          notes?: string
+          phone?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          gstin?: string
+          id?: string
+          name?: string
+          notes?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      table_orders: {
+        Row: {
+          created_at: string
+          created_by: string
+          gst: number
+          id: string
+          items: Json
+          notes: string
+          paid: boolean
+          payment_method: string
+          status: string
+          subtotal: number
+          table_id: string
+          total: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          gst: number
+          id?: string
+          items: Json
+          notes?: string
+          paid?: boolean
+          payment_method?: string
+          status?: string
+          subtotal: number
+          table_id: string
+          total: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          gst?: number
+          id?: string
+          items?: Json
+          notes?: string
+          paid?: boolean
+          payment_method?: string
+          status?: string
+          subtotal?: number
+          table_id?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_orders_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "restaurant_tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1060,6 +1301,10 @@ export type Database = {
       }
       place_order: {
         Args: { _booking_id: string; _items: Json; _notes: string }
+        Returns: string
+      }
+      place_table_order: {
+        Args: { _items: Json; _notes: string; _table_id: string }
         Returns: string
       }
       revoke_staff_role: {

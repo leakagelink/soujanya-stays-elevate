@@ -78,6 +78,13 @@
       "when": 1791451449685,
       "tag": "0010_front_desk_extras",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791456954163,
+      "tag": "0011_restaurant_kitchen",
+      "breakpoints": true
     }
   ]
 }
