@@ -31,6 +31,8 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] GST invoice page (CGST/SGST split) with print/PDF; email BLOCKED on email domain
 - [x] Paid / balance tracking per booking
 
+- [x] Full check-in form: guest photo + ID front/back (camera or upload), ID details, address, Form C visa for foreigners
+
 ## Phase 4 — Guest experience + food ordering
 - [ ] Guest portal: view booking, add extras, upgrade requests
 - [ ] Restaurant + in-room menu with categories, add-ons, availability
