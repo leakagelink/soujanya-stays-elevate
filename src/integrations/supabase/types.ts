@@ -128,6 +128,44 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_groups: {
+        Row: {
+          company_id: string | null
+          contact_name: string
+          created_at: string
+          id: string
+          name: string
+          notes: string
+          phone: string
+        }
+        Insert: {
+          company_id?: string | null
+          contact_name?: string
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string
+          phone?: string
+        }
+        Update: {
+          company_id?: string | null
+          contact_name?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_groups_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_history: {
         Row: {
           action: string
@@ -174,9 +212,12 @@ export type Database = {
           checked_out_at: string | null
           children: number | null
           coming_from: string
+          company_id: string | null
           created_at: string
+          discount_pct: number
           email: string
           going_to: string
+          group_id: string | null
           gst: number
           guest_name: string
           guest_photo_path: string | null
@@ -211,9 +252,12 @@ export type Database = {
           checked_out_at?: string | null
           children?: number | null
           coming_from?: string
+          company_id?: string | null
           created_at?: string
+          discount_pct?: number
           email?: string
           going_to?: string
+          group_id?: string | null
           gst: number
           guest_name: string
           guest_photo_path?: string | null
@@ -248,9 +292,12 @@ export type Database = {
           checked_out_at?: string | null
           children?: number | null
           coming_from?: string
+          company_id?: string | null
           created_at?: string
+          discount_pct?: number
           email?: string
           going_to?: string
+          group_id?: string | null
           gst?: number
           guest_name?: string
           guest_photo_path?: string | null
@@ -277,6 +324,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "bookings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "booking_groups"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_room_type_id_fkey"
             columns: ["room_type_id"]
             isOneToOne: false
@@ -284,6 +345,122 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cash_entries: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string
+          id: string
+          kind: string
+          reason: string
+          session_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind: string
+          reason: string
+          session_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          reason?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_entries_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "cash_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_sessions: {
+        Row: {
+          closed_at: string | null
+          closed_by: string | null
+          counted: number | null
+          expected: number | null
+          id: string
+          notes: string
+          opened_at: string
+          opened_by: string
+          opening_float: number
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by?: string | null
+          counted?: number | null
+          expected?: number | null
+          id?: string
+          notes?: string
+          opened_at?: string
+          opened_by?: string
+          opening_float?: number
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by?: string | null
+          counted?: number | null
+          expected?: number | null
+          id?: string
+          notes?: string
+          opened_at?: string
+          opened_by?: string
+          opening_float?: number
+        }
+        Relationships: []
+      }
+      companies: {
+        Row: {
+          active: boolean
+          billing_address: string
+          contact_person: string
+          created_at: string
+          credit_limit: number
+          discount_pct: number
+          email: string
+          gstin: string
+          id: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          active?: boolean
+          billing_address?: string
+          contact_person?: string
+          created_at?: string
+          credit_limit?: number
+          discount_pct?: number
+          email?: string
+          gstin?: string
+          id?: string
+          name: string
+          phone?: string
+        }
+        Update: {
+          active?: boolean
+          billing_address?: string
+          contact_person?: string
+          created_at?: string
+          credit_limit?: number
+          discount_pct?: number
+          email?: string
+          gstin?: string
+          id?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: []
       }
       deposits: {
         Row: {
@@ -334,6 +511,83 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: true
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          amount: number
+          client_name: string
+          company_id: string | null
+          created_at: string
+          created_by: string | null
+          end_time: string
+          event_date: string
+          gst: number
+          guests: number
+          id: string
+          kind: string
+          notes: string
+          package: string
+          paid: number
+          phone: string
+          start_time: string
+          status: string
+          title: string
+          total: number
+          venue: string
+        }
+        Insert: {
+          amount?: number
+          client_name: string
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          end_time?: string
+          event_date: string
+          gst?: number
+          guests?: number
+          id?: string
+          kind?: string
+          notes?: string
+          package?: string
+          paid?: number
+          phone?: string
+          start_time?: string
+          status?: string
+          title: string
+          total?: number
+          venue?: string
+        }
+        Update: {
+          amount?: number
+          client_name?: string
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          end_time?: string
+          event_date?: string
+          gst?: number
+          guests?: number
+          id?: string
+          kind?: string
+          notes?: string
+          package?: string
+          paid?: number
+          phone?: string
+          start_time?: string
+          status?: string
+          title?: string
+          total?: number
+          venue?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -1267,7 +1521,12 @@ export type Database = {
       can_finance: { Args: { _user_id: string }; Returns: boolean }
       can_housekeeping: { Args: { _user_id: string }; Returns: boolean }
       can_kitchen: { Args: { _user_id: string }; Returns: boolean }
+      cash_expected: { Args: { _session_id: string }; Returns: number }
       claim_first_admin: { Args: never; Returns: boolean }
+      close_cash_session: {
+        Args: { _counted: number; _notes: string; _session_id: string }
+        Returns: number
+      }
       grant_staff_role: {
         Args: { _email: string; _role: Database["public"]["Enums"]["app_role"] }
         Returns: undefined
