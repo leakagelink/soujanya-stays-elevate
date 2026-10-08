@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          cancelled_at: string | null
           check_in: string
           check_out: string
           checked_in_at: string | null
@@ -37,6 +38,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cancelled_at?: string | null
           check_in: string
           check_out: string
           checked_in_at?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cancelled_at?: string | null
           check_in?: string
           check_out?: string
           checked_in_at?: string | null
@@ -116,6 +119,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "folio_charges_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          created_by: string
+          id: string
+          kind: string
+          method: string
+          note: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          method?: string
+          note?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: string
+          method?: string
+          note?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
