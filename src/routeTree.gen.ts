@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as HousekeepingRouteImport } from './routes/housekeeping'
 import { Route as KitchenRouteImport } from './routes/kitchen'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as StayRouteImport } from './routes/stay'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as InvoiceIdRouteImport } from './routes/invoice.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -32,6 +34,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HousekeepingRoute = HousekeepingRouteImport.update({
+  id: '/housekeeping',
+  path: '/housekeeping',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KitchenRoute = KitchenRouteImport.update({
   id: '/kitchen',
   path: '/kitchen',
@@ -47,6 +54,11 @@ const StayRoute = StayRouteImport.update({
   path: '/stay',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvoiceIdRoute = InvoiceIdRouteImport.update({
   id: '/invoice/$id',
   path: '/invoice/$id',
@@ -57,18 +69,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
   '/stay': typeof StayRoute
+  '/team': typeof TeamRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
   '/stay': typeof StayRoute
+  '/team': typeof TeamRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesById {
@@ -76,9 +92,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
   '/stay': typeof StayRoute
+  '/team': typeof TeamRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRouteTypes {
@@ -87,27 +105,33 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
     | '/stay'
+    | '/team'
     | '/invoice/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/auth'
+    | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
     | '/stay'
+    | '/team'
     | '/invoice/$id'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/auth'
+    | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
     | '/stay'
+    | '/team'
     | '/invoice/$id'
   fileRoutesById: FileRoutesById
 }
@@ -115,9 +139,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  HousekeepingRoute: typeof HousekeepingRoute
   KitchenRoute: typeof KitchenRoute
   MyBookingsRoute: typeof MyBookingsRoute
   StayRoute: typeof StayRoute
+  TeamRoute: typeof TeamRoute
   InvoiceIdRoute: typeof InvoiceIdRoute
 }
 
@@ -144,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/housekeeping': {
+      id: '/housekeeping'
+      path: '/housekeeping'
+      fullPath: '/housekeeping'
+      preLoaderRoute: typeof HousekeepingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kitchen': {
       id: '/kitchen'
       path: '/kitchen'
@@ -165,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invoice/$id': {
       id: '/invoice/$id'
       path: '/invoice/$id'
@@ -179,9 +219,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  HousekeepingRoute: HousekeepingRoute,
   KitchenRoute: KitchenRoute,
   MyBookingsRoute: MyBookingsRoute,
   StayRoute: StayRoute,
+  TeamRoute: TeamRoute,
   InvoiceIdRoute: InvoiceIdRoute,
 }
 export const routeTree = rootRouteImport
