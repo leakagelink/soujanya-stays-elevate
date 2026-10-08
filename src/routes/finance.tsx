@@ -39,7 +39,7 @@ function Finance() {
   const now = new Date();
   const [from, setFrom] = useState(iso(new Date(now.getFullYear(), now.getMonth(), 1)));
   const [to, setTo] = useState(iso(now));
-  const [tab, setTab] = useState<"dash" | "exp" | "reports">("dash");
+  const [tab, setTab] = useState<"dash" | "daily" | "exp" | "reports">("dash");
   const [bk, setBk] = useState<Bk[]>([]);
   const [rooms, setRooms] = useState(0);
   const [pays, setPays] = useState<{ amount: number; kind: string; method: string; created_at: string }[]>([]);
