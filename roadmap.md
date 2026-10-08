@@ -3,9 +3,10 @@
 Status legend: [x] done · [ ] pending · [~] in progress
 
 ## Current request — Modern guest app
-- [~] Build guest home with room booking, dining, experiences, requests and account navigation
-- [ ] Modernize guest bookings and stay services with imagery and reduced-motion-safe animation
-- [ ] Verify guest navigation, booking and order controls with signed-in data
+- [x] Build guest home with room booking, dining, experiences, requests and account navigation
+- [x] Modernize guest bookings and stay services with imagery and reduced-motion-safe animation
+- [x] Verify public guest navigation, room reservation inputs, menu search, stay redirect and layouts at 320/393/768/1280px; five targeted tests pass, no runtime errors, build OK
+- [ ] Verify saved booking and food order end-to-end with signed-in guest data — blocked: no requesting-user guest session available; user must sign in or approve a test account
 
 ## Current request — Mobile optimization
 - [x] Optimize staff and guest panels, forms, tables, tabs and check-in on phones
