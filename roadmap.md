@@ -46,11 +46,11 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] Staff roster, shifts, attendance, leave
 - [x] Task completion log and staff performance
 
-## Phase 6 — Finance + business analytics
-- [ ] Revenue, occupancy, ADR, RevPAR dashboards
-- [ ] Expense tracking and vendor bills
-- [ ] P&L, GST summary, occupancy and source-of-business reports
-- [ ] CSV / PDF exports and date-range filters
+## Phase 6 — Finance + business analytics (DONE)
+- [x] Revenue, occupancy, ADR, RevPAR dashboards
+- [x] Expense tracking and vendor bills
+- [x] P&L, GST summary, occupancy and source-of-business reports
+- [x] CSV / PDF exports and date-range filters
 
 ## Phase 7 — Hardening and launch
 - [ ] Role-based access checks on every panel

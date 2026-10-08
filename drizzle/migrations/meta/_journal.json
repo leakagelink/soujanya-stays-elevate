@@ -57,6 +57,13 @@
       "when": 1791435179877,
       "tag": "0007_housekeeping_staff",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791437381183,
+      "tag": "0008_finance",
+      "breakpoints": true
     }
   ]
 }
