@@ -137,3 +137,49 @@
     color: var(--color-foreground);
   }
 }
+
+/* Logo-led guest homepage; isolated from operational screens. */
+.resort-home {
+  --home-overlay: linear-gradient(180deg, color-mix(in oklab, var(--primary) 48%, transparent), transparent 40%, color-mix(in oklab, var(--primary) 78%, transparent));
+  --home-shadow: 0 12px 36px color-mix(in oklab, var(--primary) 12%, transparent);
+  letter-spacing: 0;
+}
+.resort-home .home-shell { width: min(100% - 96px, 1280px); margin-inline: auto; }
+.resort-home .home-hero { height: 84svh; min-height: 570px; max-height: 980px; }
+.resort-home .hero-overlay { background: var(--home-overlay); }
+.resort-home .hero-photo { animation: forest-drift 24s ease-in-out infinite alternate; }
+.resort-home .hero-copy { animation: home-arrive 1.2s ease-out both; }
+.resort-home .home-kicker { font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.resort-home .home-title { font-size: 112px; line-height: .96; font-weight: 400; }
+.resort-home .home-heading { font-size: 64px; line-height: 1.05; font-weight: 400; }
+.resort-home .home-cta { height: 56px; padding-inline: 28px; border-radius: 2px; font-size: 12px; box-shadow: none; }
+.resort-home .home-gold { background: var(--gold); color: var(--primary); }
+.resort-home .home-gold:hover { background: var(--accent); }
+.resort-home .home-glass { background: color-mix(in oklab, var(--ivory) 8%, transparent); color: var(--ivory); border: 1px solid color-mix(in oklab, var(--ivory) 45%, transparent); backdrop-filter: blur(12px); }
+.resort-home .home-glass:hover { background: color-mix(in oklab, var(--ivory) 18%, transparent); }
+.resort-home .booking-input { width: 100%; min-width: 0; background: transparent; color: var(--primary); outline: none; padding-block: 8px; font-size: 16px; }
+.resort-home .booking-input:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.resort-home .form-input { display: block; width: 100%; margin-top: 8px; border: 1px solid var(--input); background: var(--card); padding: 14px; border-radius: 2px; font-size: 15px; }
+.resort-home .form-input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.resort-home .room-photo { aspect-ratio: 3/4; }
+.resort-home .photo-zoom { transition: transform 1.2s ease; }
+.resort-home .group:hover .photo-zoom { transform: scale(1.04); }
+.resort-home .home-reveal { transition: opacity .9s ease, transform .9s ease; }
+.resort-home .reveal-pending { opacity: 0; transform: translateY(24px); }
+.resort-home section[id] { scroll-margin-top: 24px; }
+.resort-home .booking-summary { box-shadow: var(--home-shadow); }
+@keyframes forest-drift { from { transform: scale(1); } to { transform: scale(1.045); } }
+@keyframes home-arrive { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 768px) { .resort-home .room-item:nth-child(even) { margin-top: 100px; } }
+@media (max-width: 767px) {
+  .resort-home .home-shell { width: calc(100% - 40px); }
+  .resort-home .home-hero { height: 80svh; min-height: 560px; max-height: 760px; }
+  .resort-home .home-title { font-size: 56px; }
+  .resort-home .home-heading { font-size: 44px; }
+  .resort-home .home-cta { padding-inline: 20px; font-size: 11px; }
+  .resort-home .room-photo { aspect-ratio: 4/5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .resort-home *, .resort-home *::before, .resort-home *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .resort-home .reveal-pending { opacity: 1; transform: none; }
+}
