@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as KitchenRouteImport } from './routes/kitchen'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
+import { Route as StayRouteImport } from './routes/stay'
 import { Route as InvoiceIdRouteImport } from './routes/invoice.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,9 +32,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KitchenRoute = KitchenRouteImport.update({
+  id: '/kitchen',
+  path: '/kitchen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyBookingsRoute = MyBookingsRouteImport.update({
   id: '/my-bookings',
   path: '/my-bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StayRoute = StayRouteImport.update({
+  id: '/stay',
+  path: '/stay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InvoiceIdRoute = InvoiceIdRouteImport.update({
@@ -45,14 +57,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/stay': typeof StayRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/stay': typeof StayRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRoutesById {
@@ -60,22 +76,48 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/stay': typeof StayRoute
   '/invoice/$id': typeof InvoiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/kitchen'
+    | '/my-bookings'
+    | '/stay'
+    | '/invoice/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
-  id: '__root__' | '/' | '/admin' | '/auth' | '/my-bookings' | '/invoice/$id'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/kitchen'
+    | '/my-bookings'
+    | '/stay'
+    | '/invoice/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/kitchen'
+    | '/my-bookings'
+    | '/stay'
+    | '/invoice/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  KitchenRoute: typeof KitchenRoute
   MyBookingsRoute: typeof MyBookingsRoute
+  StayRoute: typeof StayRoute
   InvoiceIdRoute: typeof InvoiceIdRoute
 }
 
@@ -102,11 +144,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kitchen': {
+      id: '/kitchen'
+      path: '/kitchen'
+      fullPath: '/kitchen'
+      preLoaderRoute: typeof KitchenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my-bookings': {
       id: '/my-bookings'
       path: '/my-bookings'
       fullPath: '/my-bookings'
       preLoaderRoute: typeof MyBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stay': {
+      id: '/stay'
+      path: '/stay'
+      fullPath: '/stay'
+      preLoaderRoute: typeof StayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/invoice/$id': {
@@ -123,7 +179,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  KitchenRoute: KitchenRoute,
   MyBookingsRoute: MyBookingsRoute,
+  StayRoute: StayRoute,
   InvoiceIdRoute: InvoiceIdRoute,
 }
 export const routeTree = rootRouteImport
