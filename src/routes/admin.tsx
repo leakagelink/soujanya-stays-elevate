@@ -212,13 +212,15 @@ function Folio({ booking, onSaveNotes }: { booking: Booking; onSaveNotes: (n: st
               <span>{inr(c.amount)}</span>
             </li>
           ))}
-          <li className="mt-1 flex justify-between border-t border-border pt-2 font-semibold"><span>Total due</span><span className="text-gold">{inr(booking.total + extras)}</span></li>
+          <li className="mt-1 flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="text-gold">{inr(booking.total + extras)}</span></li>
         </ul>
         <div className="mt-3 flex gap-2">
           <input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Item, e.g. Dinner, late checkout" className="flex-1 border border-border bg-transparent px-2 py-1 text-sm" />
           <input value={amt} onChange={(e) => setAmt(e.target.value)} placeholder="₹ (− for discount)" className="w-32 border border-border bg-transparent px-2 py-1 text-sm" />
           <Btn onClick={add}>Add</Btn>
         </div>
+        <Payments booking={booking} grand={booking.total + extras} />
+        <Link to="/invoice/$id" params={{ id: booking.id }} target="_blank" className="mt-3 inline-block text-xs tracking-widest text-gold underline">OPEN GST INVOICE</Link>
       </div>
       <div>
         <p className="text-xs tracking-widest text-muted-foreground">GUEST NOTES & PREFERENCES</p>
