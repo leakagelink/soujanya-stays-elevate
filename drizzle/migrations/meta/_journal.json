@@ -85,6 +85,13 @@
       "when": 1791456954163,
       "tag": "0011_restaurant_kitchen",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791457630267,
+      "tag": "0012_business_groups_events_cash",
+      "breakpoints": true
     }
   ]
 }
