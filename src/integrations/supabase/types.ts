@@ -14,6 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          active: boolean
+          capacity: number
+          category: string
+          description: string
+          duration_min: number
+          id: string
+          name: string
+          price: number
+          slots: string[]
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          capacity?: number
+          category?: string
+          description?: string
+          duration_min?: number
+          id?: string
+          name: string
+          price: number
+          slots?: string[]
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          capacity?: number
+          category?: string
+          description?: string
+          duration_min?: number
+          id?: string
+          name?: string
+          price?: number
+          slots?: string[]
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      activity_bookings: {
+        Row: {
+          activity_id: string
+          booking_id: string
+          created_at: string
+          date: string
+          id: string
+          people: number
+          slot: string
+          status: string
+          total: number
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          booking_id: string
+          created_at?: string
+          date: string
+          id?: string
+          people: number
+          slot: string
+          status?: string
+          total: number
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          booking_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          people?: number
+          slot?: string
+          status?: string
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_bookings_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_bookings_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           address: string
@@ -171,6 +264,131 @@ export type Database = {
           },
         ]
       }
+      menu_items: {
+        Row: {
+          available: boolean
+          category: string
+          created_at: string
+          description: string
+          id: string
+          is_veg: boolean
+          name: string
+          price: number
+          sort_order: number
+        }
+        Insert: {
+          available?: boolean
+          category: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_veg?: boolean
+          name: string
+          price: number
+          sort_order?: number
+        }
+        Update: {
+          available?: boolean
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_veg?: boolean
+          name?: string
+          price?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          id: string
+          menu_item_id: string
+          name: string
+          order_id: string
+          price: number
+          qty: number
+        }
+        Insert: {
+          id?: string
+          menu_item_id: string
+          name: string
+          order_id: string
+          price: number
+          qty: number
+        }
+        Update: {
+          id?: string
+          menu_item_id?: string
+          name?: string
+          order_id?: string
+          price?: number
+          qty?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_menu_item_id_fkey"
+            columns: ["menu_item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          booking_id: string
+          created_at: string
+          gst: number
+          id: string
+          notes: string
+          room_number: string
+          status: string
+          subtotal: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          gst: number
+          id?: string
+          notes?: string
+          room_number?: string
+          status?: string
+          subtotal: number
+          total: number
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          gst?: number
+          id?: string
+          notes?: string
+          room_number?: string
+          status?: string
+          subtotal?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -272,6 +490,47 @@ export type Database = {
         }
         Relationships: []
       }
+      service_requests: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          room_number: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          message: string
+          room_number?: string
+          status?: string
+          user_id?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          room_number?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -295,6 +554,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activity_slots_used: {
+        Args: { _activity_id: string; _date: string }
+        Returns: {
+          slot: string
+          used: number
+        }[]
+      }
+      book_activity: {
+        Args: {
+          _activity_id: string
+          _booking_id: string
+          _date: string
+          _people: number
+          _slot: string
+        }
+        Returns: string
+      }
+      can_housekeeping: { Args: { _user_id: string }; Returns: boolean }
+      can_kitchen: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }
       grant_staff_role: {
         Args: { _email: string; _role: Database["public"]["Enums"]["app_role"] }
@@ -315,6 +593,10 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }[]
+      }
+      place_order: {
+        Args: { _booking_id: string; _items: Json; _notes: string }
+        Returns: string
       }
       revoke_staff_role: {
         Args: {
