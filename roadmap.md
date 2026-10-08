@@ -25,11 +25,11 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] Guest notes + Guest history tab (all stays, total spent)
 - [x] Folio: room charge, extras, discounts
 
-## Phase 3 — Payments, invoices, policies
-- [ ] Payment gateway (Razorpay or Stripe — needs user's choice + keys)
-- [ ] Deposit / advance rules, cancellation and refund handling
-- [ ] GST invoices with correct slab, PDF download and email
-- [ ] Payment reconciliation and failed-payment recovery
+## Phase 3 — Payments, invoices, policies (DONE, pay-at-hotel)
+- [x] Pay at hotel; staff record cash/UPI/card/bank payments (online gateway later if wanted)
+- [x] 30% advance, 48h free cancellation, refund recording
+- [x] GST invoice page (CGST/SGST split) with print/PDF; email BLOCKED on email domain
+- [x] Paid / balance tracking per booking
 
 ## Phase 4 — Guest experience + food ordering
 - [ ] Guest portal: view booking, add extras, upgrade requests

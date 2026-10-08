@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/rooms";
+import { advanceDue, refundDue } from "@/lib/policy";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/admin")({
 type Booking = {
   id: string; user_id: string; guest_name: string; phone: string; check_in: string; check_out: string;
   nights: number; guests: number; total: number; status: string; notes: string; room_number: string;
-  room_type_id: string; source: string; room_types: { name: string } | null;
+  room_type_id: string; source: string; cancelled_at: string | null; room_types: { name: string } | null;
 };
 type Room = { id: string; name: string; price_per_night: number; total_rooms: number; max_guests: number };
 type Charge = { id: string; description: string; amount: number };
@@ -164,7 +165,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
                     }}>Check in</Btn>
                   )}
                   {b.status === "checked_in" && <Btn onClick={() => update(b.id, { status: "checked_out", checked_out_at: new Date().toISOString() })}>Check out</Btn>}
-                  {(b.status === "pending" || b.status === "confirmed") && <Btn danger onClick={() => confirm("Cancel booking?") && update(b.id, { status: "cancelled" })}>Cancel</Btn>}
+                  {(b.status === "pending" || b.status === "confirmed") && <Btn danger onClick={() => confirm("Cancel booking?") && update(b.id, { status: "cancelled", cancelled_at: new Date().toISOString() })}>Cancel</Btn>}
                   <Btn onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Close" : "Folio & notes"}</Btn>
                 </div>
               </div>
@@ -212,13 +213,15 @@ function Folio({ booking, onSaveNotes }: { booking: Booking; onSaveNotes: (n: st
               <span>{inr(c.amount)}</span>
             </li>
           ))}
-          <li className="mt-1 flex justify-between border-t border-border pt-2 font-semibold"><span>Total due</span><span className="text-gold">{inr(booking.total + extras)}</span></li>
+          <li className="mt-1 flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="text-gold">{inr(booking.total + extras)}</span></li>
         </ul>
         <div className="mt-3 flex gap-2">
           <input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Item, e.g. Dinner, late checkout" className="flex-1 border border-border bg-transparent px-2 py-1 text-sm" />
           <input value={amt} onChange={(e) => setAmt(e.target.value)} placeholder="₹ (− for discount)" className="w-32 border border-border bg-transparent px-2 py-1 text-sm" />
           <Btn onClick={add}>Add</Btn>
         </div>
+        <Payments booking={booking} grand={booking.total + extras} />
+        <Link to="/invoice/$id" params={{ id: booking.id }} target="_blank" className="mt-3 inline-block text-xs tracking-widest text-gold underline">OPEN GST INVOICE</Link>
       </div>
       <div>
         <p className="text-xs tracking-widest text-muted-foreground">GUEST NOTES & PREFERENCES</p>
@@ -416,6 +419,46 @@ function Staff() {
             <Btn danger onClick={() => remove(r.user_id, r.role)}>Remove</Btn>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function Payments({ booking, grand }: { booking: Booking; grand: number }) {
+  const [rows, setRows] = useState<{ id: string; amount: number; kind: string; method: string; created_at: string }[]>([]);
+  const [amt, setAmt] = useState("");
+  const [method, setMethod] = useState<"cash" | "upi" | "card" | "bank">("cash");
+  async function load() {
+    const { data } = await supabase.from("payments").select("id,amount,kind,method,created_at").eq("booking_id", booking.id).order("created_at");
+    setRows(data ?? []);
+  }
+  useEffect(() => { load(); }, [booking.id]);
+  async function add(kind: "payment" | "refund") {
+    const n = parseInt(amt, 10);
+    if (!(n > 0)) return;
+    const { error } = await supabase.from("payments").insert({ booking_id: booking.id, amount: n, kind, method });
+    if (error) alert(error.message); else { setAmt(""); load(); }
+  }
+  const paid = rows.reduce((s, p) => s + (p.kind === "refund" ? -p.amount : p.amount), 0);
+  const adv = advanceDue(booking.total);
+  const refund = booking.status === "cancelled" && booking.cancelled_at ? refundDue(paid, booking.check_in, new Date(booking.cancelled_at)) : null;
+  return (
+    <div className="mt-5">
+      <p className="text-xs tracking-widest text-muted-foreground">PAYMENTS</p>
+      <ul className="mt-2 text-sm">
+        {rows.map((p) => <li key={p.id} className="flex justify-between py-0.5"><span>{p.kind === "refund" ? "Refund" : "Paid"} · {p.method.toUpperCase()} · {p.created_at.slice(0, 10)}</span><span>{p.kind === "refund" ? "−" : ""}{inr(p.amount)}</span></li>)}
+        <li className="flex justify-between border-t border-border pt-1"><span>Paid so far</span><span>{inr(paid)}</span></li>
+        <li className="flex justify-between font-semibold"><span>Balance</span><span>{inr(grand - paid)}</span></li>
+      </ul>
+      {paid < adv && booking.status !== "cancelled" && <p className="mt-1 text-xs text-destructive">30% advance due: {inr(adv - paid)} more</p>}
+      {refund !== null && <p className="mt-1 text-xs text-gold">{refund > 0 ? `Cancelled 48h+ before — refund ${inr(refund)}` : "Cancelled within 48h — no refund"}</p>}
+      <div className="mt-2 flex flex-wrap gap-2">
+        <input value={amt} onChange={(e) => setAmt(e.target.value)} placeholder="₹ amount" className="w-28 border border-border bg-transparent px-2 py-1 text-sm" />
+        <select value={method} onChange={(e) => setMethod(e.target.value as typeof method)} className="border border-border bg-transparent px-2 py-1 text-sm">
+          <option value="cash">Cash</option><option value="upi">UPI</option><option value="card">Card</option><option value="bank">Bank</option>
+        </select>
+        <Btn onClick={() => add("payment")}>Record payment</Btn>
+        <Btn danger onClick={() => add("refund")}>Refund</Btn>
       </div>
     </div>
   );
