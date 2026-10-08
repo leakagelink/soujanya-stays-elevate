@@ -128,6 +128,41 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_history: {
+        Row: {
+          action: string
+          booking_id: string
+          changed_by: string | null
+          created_at: string
+          details: string
+          id: string
+        }
+        Insert: {
+          action: string
+          booking_id: string
+          changed_by?: string | null
+          created_at?: string
+          details?: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          booking_id?: string
+          changed_by?: string | null
+          created_at?: string
+          details?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_history_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           address: string
@@ -246,6 +281,59 @@ export type Database = {
             columns: ["room_type_id"]
             isOneToOne: false
             referencedRelation: "room_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deposits: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_by: string
+          deduction: number
+          deduction_reason: string
+          id: string
+          method: string
+          received_at: string
+          refund_method: string
+          refunded_amount: number
+          refunded_at: string | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_by?: string
+          deduction?: number
+          deduction_reason?: string
+          id?: string
+          method?: string
+          received_at?: string
+          refund_method?: string
+          refunded_amount?: number
+          refunded_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_by?: string
+          deduction?: number
+          deduction_reason?: string
+          id?: string
+          method?: string
+          received_at?: string
+          refund_method?: string
+          refunded_amount?: number
+          refunded_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposits_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -440,6 +528,81 @@ export type Database = {
         }
         Relationships: []
       }
+      minibar_items: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      night_audits: {
+        Row: {
+          arrivals: number
+          audit_date: string
+          collected: number
+          created_at: string
+          departures: number
+          extras_revenue: number
+          id: string
+          in_house: number
+          no_shows: number
+          occupied_rooms: number
+          room_revenue: number
+          run_by: string
+          total_rooms: number
+        }
+        Insert: {
+          arrivals: number
+          audit_date: string
+          collected: number
+          created_at?: string
+          departures: number
+          extras_revenue: number
+          id?: string
+          in_house: number
+          no_shows: number
+          occupied_rooms: number
+          room_revenue: number
+          run_by: string
+          total_rooms: number
+        }
+        Update: {
+          arrivals?: number
+          audit_date?: string
+          collected?: number
+          created_at?: string
+          departures?: number
+          extras_revenue?: number
+          id?: string
+          in_house?: number
+          no_shows?: number
+          occupied_rooms?: number
+          room_revenue?: number
+          run_by?: string
+          total_rooms?: number
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string
@@ -569,6 +732,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      resort_settings: {
+        Row: {
+          early_checkin_fee: number
+          early_checkin_from: string
+          id: number
+          late_checkout_fee: number
+          late_checkout_until: string
+          security_deposit: number
+          updated_at: string
+        }
+        Insert: {
+          early_checkin_fee?: number
+          early_checkin_from?: string
+          id?: number
+          late_checkout_fee?: number
+          late_checkout_until?: string
+          security_deposit?: number
+          updated_at?: string
+        }
+        Update: {
+          early_checkin_fee?: number
+          early_checkin_from?: string
+          id?: number
+          late_checkout_fee?: number
+          late_checkout_until?: string
+          security_deposit?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       room_types: {
         Row: {
@@ -754,6 +947,56 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          check_in: string
+          check_out: string
+          created_at: string
+          email: string
+          guest_name: string
+          guests: number
+          id: string
+          phone: string
+          room_type_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          check_in: string
+          check_out: string
+          created_at?: string
+          email?: string
+          guest_name: string
+          guests?: number
+          id?: string
+          phone: string
+          room_type_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          email?: string
+          guest_name?: string
+          guests?: number
+          id?: string
+          phone?: string
+          room_type_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_room_type_id_fkey"
+            columns: ["room_type_id"]
+            isOneToOne: false
+            referencedRelation: "room_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -765,6 +1008,10 @@ export type Database = {
           slot: string
           used: number
         }[]
+      }
+      apply_time_fee: {
+        Args: { _booking_id: string; _kind: string }
+        Returns: undefined
       }
       book_activity: {
         Args: {
@@ -801,6 +1048,16 @@ export type Database = {
           user_id: string
         }[]
       }
+      modify_booking: {
+        Args: {
+          _check_in: string
+          _check_out: string
+          _guests: number
+          _id: string
+          _room_type_id: string
+        }
+        Returns: number
+      }
       place_order: {
         Args: { _booking_id: string; _items: Json; _notes: string }
         Returns: string
@@ -812,12 +1069,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      rooms_free: {
+        Args: {
+          _exclude?: string
+          _in: string
+          _out: string
+          _room_type_id: string
+        }
+        Returns: number
+      }
+      run_night_audit: { Args: { _date: string }; Returns: string }
       staff_directory: {
         Args: never
         Returns: {
           email: string
           roles: string[]
           user_id: string
+        }[]
+      }
+      waitlist_available: {
+        Args: never
+        Returns: {
+          id: string
         }[]
       }
     }
