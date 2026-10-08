@@ -1,3 +1,5 @@
+import { PanelHeader } from "@/components/PanelHeader";
+import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -41,13 +43,11 @@ function Stay() {
   const bk = bks?.find((b) => b.id === sel);
   if (loading) return null;
   return (
-    <div className="min-h-screen bg-secondary px-4 py-10 md:px-10">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-10 md:px-10">
       <div className="mx-auto max-w-5xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span></Link>
-          <Link to="/my-bookings" className="text-xs tracking-widest text-muted-foreground">MY BOOKINGS</Link>
-        </div>
-        <h1 className="mt-8 font-display text-5xl text-primary">My stay</h1>
+        <PanelHeader><Link to="/my-bookings" className="text-xs tracking-widest text-muted-foreground">MY BOOKINGS</Link></PanelHeader>
+        
+        <h1 className="mt-8 font-display text-4xl md:text-5xl text-primary">My stay</h1>
         {!user ? <p className="mt-6">Please <Link to="/auth" className="text-gold underline">sign in</Link> to continue.</p>
           : bks === null ? <p className="mt-6 text-muted-foreground">Loading…</p>
           : !bk ? <p className="mt-6 text-muted-foreground">You have no confirmed or current stay. <Link to="/" className="text-gold underline">Book a room</Link></p>
@@ -59,11 +59,11 @@ function Stay() {
                 </select>
               )}
               <p className="mt-3 text-sm text-muted-foreground">{bk.room_types?.name}{bk.room_number && ` · Room ${bk.room_number}`} · {bk.check_in} → {bk.check_out} · <span className="uppercase">{bk.status.replace("_", " ")}</span></p>
-              <div className="mt-6 flex gap-2 border-b border-border">
+              <div className="panel-tabs mt-6 border-b border-border">
                 {(["food", "activities", "requests"] as const).map((t) => (
-                  <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
+                  <Button variant="panel" key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
                     {{ food: "In-room dining", activities: "Spa & activities", requests: "Requests" }[t]}
-                  </button>
+                  </Button>
                 ))}
               </div>
               {tab === "food" && <Food bk={bk} />}
@@ -104,7 +104,7 @@ function Food({ bk }: { bk: Bk }) {
   }
   const canOrder = bk.status === "checked_in";
   return (
-    <div className="mt-6 grid gap-8 md:grid-cols-[1fr_320px]">
+    <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div>
         {!canOrder && <p className="mb-4 bg-background p-3 text-sm text-muted-foreground">You can browse the menu now. Ordering opens once you're checked in.</p>}
         {cats.map((c) => (
@@ -112,14 +112,14 @@ function Food({ bk }: { bk: Bk }) {
             <h3 className="font-display text-2xl text-primary">{c}</h3>
             <ul className="mt-2 grid gap-2">
               {menu.filter((m) => m.category === c).map((m) => (
-                <li key={m.id} className={`flex items-center gap-3 bg-background p-3 ${!m.available ? "opacity-50" : ""}`}>
-                  <span className={`h-3 w-3 border ${m.is_veg ? "border-primary bg-primary" : "border-destructive bg-destructive"}`} title={m.is_veg ? "Veg" : "Non-veg"} />
-                  <div className="flex-1"><p className="text-sm">{m.name}</p><p className="text-xs text-muted-foreground">{m.description}</p></div>
-                  <span className="text-sm text-gold">{inr(m.price)}</span>
+                <li key={m.id} className={`flex flex-wrap items-center gap-3 bg-background p-3 ${!m.available ? "opacity-50" : ""}`}>
+                  <span className={`h-3 w-3 shrink-0 border ${m.is_veg ? "border-primary bg-primary" : "border-destructive bg-destructive"}`} title={m.is_veg ? "Veg" : "Non-veg"} />
+                  <div className="min-w-0 flex-1 basis-1/2"><p className="text-sm">{m.name}</p><p className="text-xs text-muted-foreground">{m.description}</p></div>
+                  <span className="panel-money text-sm text-gold">{inr(m.price)}</span>
                   {m.available && canOrder ? (
                     <div className="flex items-center gap-2 text-sm">
-                      {cart[m.id] ? <><button onClick={() => add(m.id, -1)} className="border border-border px-2">−</button><span>{cart[m.id]}</span></> : null}
-                      <button onClick={() => add(m.id, 1)} className="border border-border px-2">+</button>
+                      {cart[m.id] ? <><Button variant="panel" onClick={() => add(m.id, -1)} className="border border-border px-2">−</Button><span>{cart[m.id]}</span></> : null}
+                      <Button variant="panel" onClick={() => add(m.id, 1)} className="border border-border px-2">+</Button>
                     </div>
                   ) : !m.available ? <span className="text-xs">Unavailable</span> : null}
                 </li>
@@ -133,13 +133,13 @@ function Food({ bk }: { bk: Bk }) {
           <p className="text-xs tracking-widest text-muted-foreground">YOUR ORDER</p>
           {sub === 0 ? <p className="mt-2 text-sm text-muted-foreground">Cart is empty.</p> : (
             <ul className="mt-2 text-sm">
-              {menu.filter((m) => cart[m.id]).map((m) => <li key={m.id} className="flex justify-between"><span>{cart[m.id]} × {m.name}</span><span>{inr(m.price * cart[m.id]!)}</span></li>)}
+              {menu.filter((m) => cart[m.id]).map((m) => <li key={m.id} className="flex justify-between gap-3"><span>{cart[m.id]} × {m.name}</span><span>{inr(m.price * cart[m.id]!)}</span></li>)}
               <li className="mt-2 flex justify-between border-t border-border pt-2 text-muted-foreground"><span>GST 5%</span><span>{inr(gst)}</span></li>
               <li className="flex justify-between font-semibold"><span>Total</span><span className="text-gold">{inr(sub + gst)}</span></li>
             </ul>
           )}
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes (less spicy, no onion…)" rows={2} className="mt-3 w-full border border-border bg-transparent p-2 text-sm" />
-          <button disabled={!sub || !canOrder} onClick={place} className="mt-2 w-full bg-gold py-2 text-xs tracking-widest text-primary disabled:opacity-40">PLACE ORDER · ADD TO ROOM BILL</button>
+          <Button variant="panel" disabled={!sub || !canOrder} onClick={place} className="mt-2 w-full bg-gold py-2 text-xs tracking-widest text-primary disabled:opacity-40">PLACE ORDER · ADD TO ROOM BILL</Button>
           {msg && <p className="mt-2 text-xs text-gold">{msg}</p>}
         </div>
         {orders.length > 0 && (
@@ -147,7 +147,7 @@ function Food({ bk }: { bk: Bk }) {
             <p className="text-xs tracking-widest text-muted-foreground">YOUR ORDERS</p>
             {orders.map((o) => (
               <div key={o.id} className="mt-2 border-t border-border pt-2 text-sm">
-                <div className="flex justify-between"><span className="uppercase text-primary">{o.status}</span><span>{inr(o.total)}</span></div>
+                <div className="flex justify-between gap-3"><span className="uppercase text-primary">{o.status}</span><span>{inr(o.total)}</span></div>
                 <p className="text-xs text-muted-foreground">{o.order_items.map((i) => `${i.qty}× ${i.name}`).join(", ")}</p>
               </div>
             ))}
@@ -188,28 +188,28 @@ function Activities({ bk }: { bk: Bk }) {
     <div className="mt-6">
       <div className="grid gap-3 md:grid-cols-2">
         {acts.map((a) => (
-          <button key={a.id} onClick={() => { setPick(a); setSlot(""); setMsg(""); }} className={`bg-background p-4 text-left ${pick?.id === a.id ? "ring-2 ring-gold" : ""}`}>
+          <Button variant="panel" key={a.id} onClick={() => { setPick(a); setSlot(""); setMsg(""); }} className={`bg-background p-4 text-left ${pick?.id === a.id ? "ring-2 ring-gold" : ""}`}>
             <p className="text-xs tracking-widest text-muted-foreground uppercase">{a.category} · {a.duration_min} min</p>
             <p className="font-display text-2xl text-primary">{a.name}</p>
             <p className="text-sm text-muted-foreground">{a.description}</p>
             <p className="mt-1 text-sm text-gold">{inr(a.price)} / person + GST</p>
-          </button>
+          </Button>
         ))}
       </div>
       {pick && (
-        <div className="mt-4 flex flex-wrap items-end gap-3 bg-background p-4">
+        <div className="panel-form mt-4 flex flex-wrap items-end gap-3 bg-background p-4">
           <label className="text-xs">Date<input type="date" min={bk.check_in > today ? bk.check_in : today} max={bk.check_out} value={date} onChange={(e) => setDate(e.target.value)} className="block border border-border bg-transparent px-2 py-1 text-sm" /></label>
           <div className="text-xs">Time
             <div className="flex flex-wrap gap-1">
               {pick.slots.map((s) => {
                 const left = pick.capacity - (used[s] ?? 0);
-                return <button key={s} disabled={left <= 0} onClick={() => setSlot(s)} className={`border px-2 py-1 text-sm ${slot === s ? "border-gold bg-gold text-primary" : "border-border"} disabled:opacity-40`}>{s} <span className="text-xs">({left} left)</span></button>;
+                return <Button variant="panel" key={s} disabled={left <= 0} onClick={() => setSlot(s)} className={`border px-2 py-1 text-sm ${slot === s ? "border-gold bg-gold text-primary" : "border-border"} disabled:opacity-40`}>{s} <span className="text-xs">({left} left)</span></Button>;
               })}
             </div>
           </div>
           <label className="text-xs">People<input type="number" min={1} max={pick.capacity} value={people} onChange={(e) => setPeople(+e.target.value)} className="block w-20 border border-border bg-transparent px-2 py-1 text-sm" /></label>
           <span className="text-sm">Total {inr(Math.round(pick.price * people * 1.18))}</span>
-          <button disabled={!slot} onClick={book} className="bg-gold px-4 py-2 text-xs tracking-widest text-primary disabled:opacity-40">BOOK</button>
+          <Button variant="panel" disabled={!slot} onClick={book} className="bg-gold px-4 py-2 text-xs tracking-widest text-primary disabled:opacity-40">BOOK</Button>
         </div>
       )}
       {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
@@ -243,15 +243,15 @@ function Requests({ bk }: { bk: Bk }) {
     <div className="mt-6 max-w-2xl">
       <div className="flex flex-wrap gap-2">
         {(["Extra towels", "Room cleaning", "Extra pillows", "Drinking water", "AC not working", "Wi-Fi issue"]).map((q) => (
-          <button key={q} onClick={() => { setMessage(q); setKind(q.includes("AC") || q.includes("Wi-Fi") ? "maintenance" : "housekeeping"); }} className="border border-border bg-background px-3 py-1 text-xs">{q}</button>
+          <Button variant="panel" key={q} onClick={() => { setMessage(q); setKind(q.includes("AC") || q.includes("Wi-Fi") ? "maintenance" : "housekeeping"); }} className="border border-border bg-background px-3 py-1 text-xs">{q}</Button>
         ))}
       </div>
-      <div className="mt-3 flex gap-2">
+      <div className="panel-form mt-3 flex gap-2">
         <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)} className="border border-border bg-background px-2 text-sm">
           <option value="housekeeping">Housekeeping</option><option value="maintenance">Maintenance</option><option value="other">Other</option>
         </select>
         <input value={message} maxLength={500} onChange={(e) => setMessage(e.target.value)} placeholder="How can we help?" className="flex-1 border border-border bg-background px-3 py-2 text-sm" />
-        <button onClick={send} className="bg-gold px-4 text-xs tracking-widest text-primary">SEND</button>
+        <Button variant="panel" onClick={send} className="bg-gold px-4 text-xs tracking-widest text-primary">SEND</Button>
       </div>
       {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
       <ul className="mt-4 grid gap-2">

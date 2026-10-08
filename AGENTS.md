@@ -15,3 +15,4 @@
 - External OTA/channel reservations must go through a `ChannelAdapter` (src/lib/channels.ts) into `channel_reservations` and then `bookings`, so one availability check (rooms_free in bookings_compute) prevents overbooking across channels.
 - Money rows (folio_charges, payments, expenses) of a day closed by night audit are locked by trigger; corrections are new rows on an open day.
 - UI copy and money formatting should go through src/lib/i18n.ts (`t`, `money`) when touched, so languages/currencies can be added later.
+- Operational and account screens use `.panel-page`, shared `PanelHeader`, and local table scroll containers so mobile layout changes stay isolated from the resort homepage.

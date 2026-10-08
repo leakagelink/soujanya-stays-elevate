@@ -1,3 +1,5 @@
+import { PanelHeader } from "@/components/PanelHeader";
+import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -92,13 +94,11 @@ function Team() {
   const inp = "border border-border bg-transparent px-2 py-1 text-sm";
   if (loading) return null;
   return (
-    <div className="min-h-screen bg-secondary px-4 py-8 md:px-8">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-8 md:px-8">
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span></Link>
-          <div className="flex gap-6 text-xs tracking-widest text-muted-foreground"><Link to="/housekeeping">HOUSEKEEPING</Link><Link to="/kitchen">KITCHEN</Link><Link to="/admin">FRONT DESK</Link></div>
-        </div>
-        <h1 className="mt-6 font-display text-5xl text-primary">Team</h1>
+        <PanelHeader><div className="flex gap-6 text-xs tracking-widest text-muted-foreground"><Link to="/housekeeping">HOUSEKEEPING</Link><Link to="/kitchen">KITCHEN</Link><Link to="/admin">FRONT DESK</Link></div></PanelHeader>
+        
+        <h1 className="mt-6 font-display text-4xl md:text-5xl text-primary">Team</h1>
         {!user ? <p className="mt-6">Please <Link to="/auth" className="text-gold underline">sign in</Link>.</p>
           : roles === null ? <p className="mt-6 text-muted-foreground">Checking access…</p>
           : !isStaff ? <p className="mt-6">This page is for Soujanya Stays staff.</p>
@@ -107,16 +107,16 @@ function Team() {
               <div className={box}>
                 <p className="text-xs tracking-widest text-muted-foreground">MY ATTENDANCE</p>
                 <p className="mt-2 text-sm">{open ? `Clocked in since ${time(open.clock_in)}` : "You are not clocked in."}</p>
-                <button onClick={clock} className="mt-3 bg-gold px-5 py-2 text-xs tracking-widest text-primary">{open ? "CLOCK OUT" : "CLOCK IN"}</button>
+                <Button variant="panel" onClick={clock} className="mt-3 bg-gold px-5 py-2 text-xs tracking-widest text-primary">{open ? "CLOCK OUT" : "CLOCK IN"}</Button>
                 <p className="mt-3 text-xs text-muted-foreground">Last 7 days: {hours[user.id] ?? 0} hours</p>
               </div>
               <div className={box}>
                 <p className="text-xs tracking-widest text-muted-foreground">APPLY FOR LEAVE</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="panel-form mt-2 flex flex-wrap gap-2">
                   <input type="date" className={inp} value={lv.from_date} onChange={(e) => setLv({ ...lv, from_date: e.target.value })} />
                   <input type="date" className={inp} value={lv.to_date} onChange={(e) => setLv({ ...lv, to_date: e.target.value })} />
                   <input className={`${inp} flex-1`} placeholder="Reason" value={lv.reason} onChange={(e) => setLv({ ...lv, reason: e.target.value })} />
-                  <button onClick={applyLeave} className="border border-border px-3 text-xs tracking-widest">SEND</button>
+                  <Button variant="panel" onClick={applyLeave} className="border border-border px-3 text-xs tracking-widest">SEND</Button>
                 </div>
               </div>
               {msg && <p className="text-sm text-gold md:col-span-2">{msg}</p>}
@@ -124,18 +124,18 @@ function Team() {
               <div className={`${box} md:col-span-2`}>
                 <p className="text-xs tracking-widest text-muted-foreground">SHIFTS · NEXT 7 DAYS</p>
                 {isAdmin && (
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="panel-form mt-2 flex flex-wrap gap-2">
                     <select className={inp} value={sh.user_id} onChange={(e) => setSh({ ...sh, user_id: e.target.value })}><option value="">Staff…</option>{staff.map((s) => <option key={s.user_id} value={s.user_id}>{s.email}</option>)}</select>
                     <input type="date" className={inp} value={sh.date} onChange={(e) => setSh({ ...sh, date: e.target.value })} />
                     <input type="time" className={inp} value={sh.start_time} onChange={(e) => setSh({ ...sh, start_time: e.target.value })} />
                     <input type="time" className={inp} value={sh.end_time} onChange={(e) => setSh({ ...sh, end_time: e.target.value })} />
                     <input className={inp} placeholder="Note (e.g. Front desk)" value={sh.note} onChange={(e) => setSh({ ...sh, note: e.target.value })} />
-                    <button onClick={addShift} className="bg-gold px-4 text-xs tracking-widest text-primary">ADD SHIFT</button>
+                    <Button variant="panel" onClick={addShift} className="bg-gold px-4 text-xs tracking-widest text-primary">ADD SHIFT</Button>
                   </div>
                 )}
                 <ul className="mt-3 grid gap-1 text-sm">
                   {shifts.length === 0 && <li className="text-muted-foreground">No shifts scheduled.</li>}
-                  {shifts.map((s) => <li key={s.id} className="flex gap-3 border-t border-border py-1"><span className="w-24">{s.date}</span><span className="w-28">{s.start_time.slice(0, 5)}–{s.end_time.slice(0, 5)}</span><span className="flex-1">{name(s.user_id)} {s.note && `· ${s.note}`}</span>{isAdmin && <button onClick={() => delShift(s.id)} className="text-xs text-destructive">remove</button>}</li>)}
+                  {shifts.map((s) => <li key={s.id} className="panel-stack flex gap-3 border-t border-border py-1"><span className="w-24">{s.date}</span><span className="w-28">{s.start_time.slice(0, 5)}–{s.end_time.slice(0, 5)}</span><span className="flex-1">{name(s.user_id)} {s.note && `· ${s.note}`}</span>{isAdmin && <Button variant="panel" onClick={() => delShift(s.id)} className="text-xs text-destructive">remove</Button>}</li>)}
                 </ul>
               </div>
 
@@ -147,8 +147,8 @@ function Team() {
                     <li key={l.id} className="flex flex-wrap items-center gap-2 border-t border-border py-1">
                       <span className="flex-1">{isAdmin && `${name(l.user_id)} · `}{l.from_date} → {l.to_date} {l.reason && `· ${l.reason}`}</span>
                       {isAdmin && l.status === "pending" ? <>
-                        <button onClick={() => decide(l, "approved")} className="border border-primary px-2 text-xs text-primary">APPROVE</button>
-                        <button onClick={() => decide(l, "rejected")} className="border border-destructive px-2 text-xs text-destructive">REJECT</button>
+                        <Button variant="panel" onClick={() => decide(l, "approved")} className="border border-primary px-2 text-xs text-primary">APPROVE</Button>
+                        <Button variant="panel" onClick={() => decide(l, "rejected")} className="border border-destructive px-2 text-xs text-destructive">REJECT</Button>
                       </> : <span className="text-xs uppercase">{l.status}</span>}
                     </li>
                   ))}
@@ -158,7 +158,7 @@ function Team() {
               {isAdmin && (
                 <div className={box}>
                   <p className="text-xs tracking-widest text-muted-foreground">STAFF PERFORMANCE</p>
-                  <table className="mt-2 w-full text-sm">
+                  <div className="panel-table-scroll" tabIndex={0}><table className="panel-table-wide mt-2 w-full text-sm">
                     <thead><tr className="text-left text-xs text-muted-foreground"><th>Staff</th><th>Hours (7d)</th><th>Tasks done (30d)</th><th>Now</th></tr></thead>
                     <tbody>
                       {staff.map((s) => (
@@ -170,7 +170,7 @@ function Team() {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></div>
                   <p className="mt-3 text-xs text-muted-foreground">Recent clock-ins</p>
                   <ul className="text-xs">{att.slice(0, 10).map((a) => <li key={a.id}>{name(a.user_id)} · {a.clock_in.slice(0, 10)} {time(a.clock_in)}–{a.clock_out ? time(a.clock_out) : "now"}</li>)}</ul>
                 </div>

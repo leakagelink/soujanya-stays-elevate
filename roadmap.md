@@ -2,7 +2,11 @@
 
 Status legend: [x] done · [ ] pending · [~] in progress
 
-## Current request — Home page redesign
+## Current request — Mobile optimization
+- [~] Optimize staff and guest panels, forms, tables, tabs and check-in on phones
+- [ ] Verify signed-in panels and navigation at phone, tablet and desktop sizes
+
+## Previous request — Home page redesign
 - [x] Choose logo-led visual direction with resort imagery and animations
 - [x] Implement selected home design while preserving booking functionality
 - [x] Verify imagery, room selection, summary, sign-in navigation and layout on desktop and mobile

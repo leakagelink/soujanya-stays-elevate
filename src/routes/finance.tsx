@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { DailyReport } from "@/components/OpsExtras";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
@@ -90,28 +91,28 @@ function Finance() {
   if (loading || (user && roles === null)) return <p className="p-10 text-muted-foreground">Loading…</p>;
   if (!user || !ok) return <p className="p-10">Only the owner and finance staff can see this page. <Link to="/auth" className="text-gold underline">Sign in</Link></p>;
 
-  const Card = ({ l, v, s }: { l: string; v: string; s?: string }) => <div className="border border-border bg-background p-4"><p className="text-xs tracking-widest text-muted-foreground">{l}</p><p className="mt-1 font-display text-3xl text-primary">{v}</p>{s && <p className="text-xs text-muted-foreground">{s}</p>}</div>;
+  const Card = ({ l, v, s }: { l: string; v: string; s?: string }) => <div className="border border-border bg-background p-4"><p className="text-xs tracking-widest text-muted-foreground">{l}</p><p className="mt-1 panel-metric font-display text-3xl text-primary">{v}</p>{s && <p className="text-xs text-muted-foreground">{s}</p>}</div>;
   const Row = ({ l, v, b }: { l: string; v: number; b?: boolean }) => <tr className={`border-b border-border ${b ? "font-semibold" : ""}`}><td className="py-2">{l}</td><td className="text-right">{inr(v)}</td></tr>;
   const inp = "border border-border bg-background px-3 py-2 text-sm";
 
   return (
-    <div className="min-h-screen bg-secondary">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-6 py-4 print:hidden">
+    <div className="panel-page min-h-screen bg-secondary">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-4 md:px-6 print:hidden">
         <Link to="/admin" className="font-display text-2xl tracking-[0.2em] text-primary">FINANCE</Link>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
+        <div className="panel-form panel-form flex flex-wrap items-center gap-2 text-sm">
           <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={inp} />
           <span>→</span>
           <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className={inp} />
-          <button onClick={() => window.print()} className="border border-primary px-3 py-2 text-xs tracking-widest text-primary">PRINT / PDF</button>
+          <Button variant="panel" onClick={() => window.print()} className="border border-primary px-3 py-2 text-xs tracking-widest text-primary">PRINT / PDF</Button>
         </div>
       </header>
-      <nav className="flex gap-6 bg-background px-6 pb-3 print:hidden">
-        {([["dash", "Dashboard"], ["daily", "Daily report"], ["exp", "Expenses & bills"], ["reports", "P&L & GST"]] as const).map(([t, l]) => <button key={t} onClick={() => setTab(t)} className={`text-xs tracking-widest ${tab === t ? "text-gold" : "text-muted-foreground"}`}>{l.toUpperCase()}</button>)}
+      <nav className="panel-tabs bg-background px-6 pb-3 print:hidden">
+        {([["dash", "Dashboard"], ["daily", "Daily report"], ["exp", "Expenses & bills"], ["reports", "P&L & GST"]] as const).map(([t, l]) => <Button variant="panel" key={t} onClick={() => setTab(t)} className={`text-xs tracking-widest ${tab === t ? "text-gold" : "text-muted-foreground"}`}>{l.toUpperCase()}</Button>)}
       </nav>
-      <main className="mx-auto max-w-6xl space-y-6 p-6">
+      <main className="mx-auto max-w-6xl space-y-6 p-4 md:p-6">
         <p className="text-sm text-muted-foreground">Period: {from} to {to}</p>
         {tab === "dash" && <>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-4">
             <Card l="ROOM REVENUE" v={inr(k.revenue)} s="before GST" />
             <Card l="OCCUPANCY" v={`${k.occupancy}%`} s={`${k.sold} of ${k.available} room nights`} />
             <Card l="ADR" v={inr(k.adr)} s="average rate per sold night" />
@@ -122,11 +123,11 @@ function Finance() {
             <Card l="PROFIT" v={inr(profit)} />
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Source of business</h3><table className="mt-2 w-full text-sm"><tbody>{bySource.map(([s, v]) => <tr key={s} className="border-b border-border"><td className="py-2 capitalize">{s.replace("_", " ")}</td><td>{v.n} bookings</td><td className="text-right">{inr(v.rev)}</td></tr>)}</tbody></table></section>
-            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">By room type</h3><table className="mt-2 w-full text-sm"><tbody>{byType.map(([t, v]) => <Row key={t} l={t} v={v} />)}</tbody></table></section>
-            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Payments by method</h3><table className="mt-2 w-full text-sm"><tbody>{byMethod.map(([m, v]) => <Row key={m} l={m.toUpperCase()} v={v} />)}</tbody></table></section>
+            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Source of business</h3><div className="panel-table-scroll" tabIndex={0}><table className="mt-2 w-full text-sm"><tbody>{bySource.map(([s, v]) => <tr key={s} className="border-b border-border"><td className="py-2 capitalize">{s.replace("_", " ")}</td><td>{v.n} bookings</td><td className="text-right">{inr(v.rev)}</td></tr>)}</tbody></table></div></section>
+            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">By room type</h3><div className="panel-table-scroll" tabIndex={0}><table className="mt-2 w-full text-sm"><tbody>{byType.map(([t, v]) => <Row key={t} l={t} v={v} />)}</tbody></table></div></section>
+            <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Payments by method</h3><div className="panel-table-scroll" tabIndex={0}><table className="mt-2 w-full text-sm"><tbody>{byMethod.map(([m, v]) => <Row key={m} l={m.toUpperCase()} v={v} />)}</tbody></table></div></section>
           </div>
-          <button onClick={() => download(`bookings_${from}_${to}.csv`, [["Guest", "Room type", "Check-in", "Check-out", "Nights", "Status", "Source", "Subtotal", "GST", "Total"], ...bk.map((b) => [b.guest_name, b.room_types?.name ?? "", b.check_in, b.check_out, b.nights, b.status, b.source, b.subtotal, b.gst, b.total])])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden">EXPORT BOOKINGS CSV</button>
+          <Button variant="panel" onClick={() => download(`bookings_${from}_${to}.csv`, [["Guest", "Room type", "Check-in", "Check-out", "Nights", "Status", "Source", "Subtotal", "GST", "Total"], ...bk.map((b) => [b.guest_name, b.room_types?.name ?? "", b.check_in, b.check_out, b.nights, b.status, b.source, b.subtotal, b.gst, b.total])])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden">EXPORT BOOKINGS CSV</Button>
         </>}
         {tab === "exp" && <>
           <section className="grid gap-2 bg-background p-4 md:grid-cols-4 print:hidden">
@@ -138,28 +139,28 @@ function Finance() {
             <input placeholder="Amount ₹ (incl. GST)" inputMode="numeric" value={ne.amount} onChange={(e) => setNe({ ...ne, amount: e.target.value })} className={inp} />
             <input placeholder="GST in bill ₹" inputMode="numeric" value={ne.gst} onChange={(e) => setNe({ ...ne, gst: e.target.value })} className={inp} />
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={ne.paid} onChange={(e) => setNe({ ...ne, paid: e.target.checked })} /> Already paid</label>
-            <button onClick={addExp} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground">ADD EXPENSE</button>
+            <Button variant="panel" onClick={addExp} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground">ADD EXPENSE</Button>
           </section>
           <p className="text-sm">Total {inr(expTotal)} · Unpaid bills {inr(exps.filter((e) => !e.paid).reduce((s, e) => s + e.amount, 0))}</p>
-          <table className="w-full bg-background text-sm">
+          <div className="panel-table-scroll" tabIndex={0}><table className="panel-table-wide w-full bg-background text-sm">
             <thead><tr className="border-b border-border text-left text-xs text-muted-foreground"><th className="p-2">Date</th><th>Category</th><th>Vendor</th><th>Bill</th><th>Description</th><th className="text-right">Amount</th><th className="text-right">GST</th><th>Status</th><th /></tr></thead>
-            <tbody>{exps.map((e) => <tr key={e.id} className="border-b border-border"><td className="p-2">{e.date}</td><td>{e.category}</td><td>{e.vendor}</td><td>{e.bill_no}</td><td>{e.description}</td><td className="text-right">{inr(e.amount)}</td><td className="text-right">{inr(e.gst)}</td><td><button onClick={() => togglePaid(e)} className={e.paid ? "text-primary" : "text-destructive"}>{e.paid ? "Paid" : "Unpaid"}</button></td><td><button onClick={() => delExp(e.id)} className="text-xs text-muted-foreground print:hidden">Delete</button></td></tr>)}
+            <tbody>{exps.map((e) => <tr key={e.id} className="border-b border-border"><td className="p-2">{e.date}</td><td>{e.category}</td><td>{e.vendor}</td><td>{e.bill_no}</td><td>{e.description}</td><td className="text-right">{inr(e.amount)}</td><td className="text-right">{inr(e.gst)}</td><td><Button variant="panel" onClick={() => togglePaid(e)} className={e.paid ? "text-primary" : "text-destructive"}>{e.paid ? "Paid" : "Unpaid"}</Button></td><td><Button variant="panel" onClick={() => delExp(e.id)} className="text-xs text-muted-foreground print:hidden">Delete</Button></td></tr>)}
               {!exps.length && <tr><td colSpan={9} className="p-4 text-muted-foreground">No expenses in this period.</td></tr>}</tbody>
-          </table>
-          <button onClick={() => download(`expenses_${from}_${to}.csv`, [["Date", "Category", "Vendor", "Bill no", "Description", "Amount", "GST", "Paid"], ...exps.map((e) => [e.date, e.category, e.vendor, e.bill_no, e.description, e.amount, e.gst, e.paid ? "yes" : "no"])])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden">EXPORT EXPENSES CSV</button>
+          </table></div>
+          <Button variant="panel" onClick={() => download(`expenses_${from}_${to}.csv`, [["Date", "Category", "Vendor", "Bill no", "Description", "Amount", "GST", "Paid"], ...exps.map((e) => [e.date, e.category, e.vendor, e.bill_no, e.description, e.amount, e.gst, e.paid ? "yes" : "no"])])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden">EXPORT EXPENSES CSV</Button>
         </>}
         {tab === "daily" && <DailyReport />}
         {tab === "reports" && <div className="grid gap-6 md:grid-cols-2">
-          <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Profit & loss</h3><table className="mt-2 w-full text-sm"><tbody>
+          <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Profit & loss</h3><div className="panel-table-scroll" tabIndex={0}><table className="mt-2 w-full text-sm"><tbody>
             <Row l="Room revenue (before GST)" v={k.revenue} /><Row l="Food orders (incl. GST)" v={food} /><Row l="Other extras" v={otherExtras} /><Row l="Discounts" v={discounts} /><Row l="Total income" v={income} b />
             {byCat.map(([c, v]) => <Row key={c} l={`Expense: ${c}`} v={-v} />)}<Row l="Total expenses" v={-expTotal} b /><Row l="Net profit" v={profit} b />
-          </tbody></table></section>
-          <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">GST summary</h3><table className="mt-2 w-full text-sm"><tbody>
+          </tbody></table></div></section>
+          <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">GST summary</h3><div className="panel-table-scroll" tabIndex={0}><table className="mt-2 w-full text-sm"><tbody>
             <Row l="Room GST collected (18%)" v={roomGst} /><Row l="— CGST 9%" v={Math.round(roomGst / 2)} /><Row l="— SGST 9%" v={roomGst - Math.round(roomGst / 2)} />
             <Row l="Food GST collected (5%)" v={Math.round(food - food / 1.05)} /><Row l="GST paid on bills (input credit)" v={-expGst} />
             <Row l="Estimated net GST payable" v={roomGst + Math.round(food - food / 1.05) - expGst} b />
-          </tbody></table><p className="mt-2 text-xs text-muted-foreground">Estimate only — please confirm with your accountant before filing.</p></section>
-          <button onClick={() => download(`pnl_${from}_${to}.csv`, [["Item", "Amount"], ["Room revenue", k.revenue], ["Food", food], ["Other extras", otherExtras], ["Discounts", discounts], ["Total income", income], ...byCat.map(([c, v]) => [`Expense: ${c}`, -v]), ["Total expenses", -expTotal], ["Net profit", profit], ["Room GST", roomGst], ["Input GST", expGst], ["Occupancy %", k.occupancy], ["ADR", k.adr], ["RevPAR", k.revpar]])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden md:col-span-2 md:justify-self-start">EXPORT REPORT CSV</button>
+          </tbody></table></div><p className="mt-2 text-xs text-muted-foreground">Estimate only — please confirm with your accountant before filing.</p></section>
+          <Button variant="panel" onClick={() => download(`pnl_${from}_${to}.csv`, [["Item", "Amount"], ["Room revenue", k.revenue], ["Food", food], ["Other extras", otherExtras], ["Discounts", discounts], ["Total income", income], ...byCat.map(([c, v]) => [`Expense: ${c}`, -v]), ["Total expenses", -expTotal], ["Net profit", profit], ["Room GST", roomGst], ["Input GST", expGst], ["Occupancy %", k.occupancy], ["ADR", k.adr], ["RevPAR", k.revpar]])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden md:col-span-2 md:justify-self-start">EXPORT REPORT CSV</Button>
         </div>}
       </main>
     </div>

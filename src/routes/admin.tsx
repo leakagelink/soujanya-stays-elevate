@@ -1,3 +1,5 @@
+import { PanelHeader } from "@/components/PanelHeader";
+import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -64,13 +66,11 @@ function Admin() {
 
   if (loading) return null;
   return (
-    <div className="min-h-screen bg-secondary px-4 py-10 md:px-10">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-10 md:px-10">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-xl tracking-[0.3em] text-primary md:text-2xl">SOUJANYA STAYS</span></Link>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">{isStaff && <><Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link><Link to="/housekeeping" className="text-xs tracking-widest text-muted-foreground">HOUSEKEEPING</Link><Link to="/team" className="text-xs tracking-widest text-muted-foreground">TEAM</Link><Link to="/finance" className="text-xs tracking-widest text-muted-foreground">FINANCE</Link></>}{user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}</div>
-        </div>
-        <h1 className="mt-8 font-display text-5xl text-primary">Front desk</h1>
+        <PanelHeader><div className="flex flex-wrap gap-x-6 gap-y-2">{isStaff && <><Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link><Link to="/housekeeping" className="text-xs tracking-widest text-muted-foreground">HOUSEKEEPING</Link><Link to="/team" className="text-xs tracking-widest text-muted-foreground">TEAM</Link><Link to="/finance" className="text-xs tracking-widest text-muted-foreground">FINANCE</Link></>}{user && <Button variant="panel" onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</Button>}</div></PanelHeader>
+        
+        <h1 className="mt-8 font-display text-4xl md:text-5xl text-primary">Front desk</h1>
         {!user ? (
           <p className="mt-6">Please <Link to="/auth" className="text-gold underline">sign in</Link> with a staff account.</p>
         ) : roles === null ? (
@@ -79,12 +79,12 @@ function Admin() {
           <NoAccess onClaimed={loadRoles} />
         ) : (
           <>
-            <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
+            <div className="panel-tabs mt-6 border-b border-border">
               {(["desk", "calendar", "groups", "corporate", "events", "cash", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff", "health"] as const : [])] as const).map((t) => (
-                <button key={t} onClick={() => setTab(t)}
+                <Button variant="panel" key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
                   {{ desk: "Bookings", calendar: "Occupancy", groups: "Groups", corporate: "Corporate", events: "Banquets & events", cash: "Cash drawer", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff", health: "System check" }[t]}
-                </button>
+                </Button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
@@ -118,7 +118,7 @@ function NoAccess({ onClaimed }: { onClaimed: () => void }) {
     <div className="mt-6 bg-background p-6">
       <p>This account does not have staff access.</p>
       <p className="mt-2 text-sm text-muted-foreground">Setting up the resort for the first time? Make this the owner account.</p>
-      <button onClick={claim} className="mt-4 bg-primary px-5 py-2 text-xs tracking-widest text-primary-foreground">MAKE ME THE OWNER</button>
+      <Button variant="panel" onClick={claim} className="mt-4 bg-primary px-5 py-2 text-xs tracking-widest text-primary-foreground">MAKE ME THE OWNER</Button>
       {msg && <p className="mt-3 text-sm text-destructive">{msg}</p>}
     </div>
   );
@@ -152,12 +152,12 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
     <div className="mt-6">
       <div className="flex flex-wrap items-center gap-2">
         {(["arrivals", "inhouse", "departures", "all"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)}
+          <Button variant="panel" key={f} onClick={() => setFilter(f)}
             className={`px-4 py-2 text-xs tracking-widest uppercase ${filter === f ? "bg-primary text-primary-foreground" : "bg-background"}`}>
             {f === "inhouse" ? "In-house" : f === "arrivals" ? "Today's arrivals" : f === "departures" ? "Today's departures" : "All"} ({counts[f]})
-          </button>
+          </Button>
         ))}
-        <button onClick={() => setWalkin(!walkin)} className="ml-auto bg-gold px-4 py-2 text-xs tracking-widest text-primary">+ NEW BOOKING</button>
+        <Button variant="panel" onClick={() => setWalkin(!walkin)} className="ml-auto bg-gold px-4 py-2 text-xs tracking-widest text-primary">+ NEW BOOKING</Button>
       </div>
       {checkin && <CheckInForm booking={checkin} onClose={() => setCheckin(null)} onDone={() => { setCheckin(null); reload(); }} />}
       {walkin && <WalkIn rooms={rooms} done={() => { setWalkin(false); reload(); }} />}
@@ -191,7 +191,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
 }
 
 function Btn({ children, onClick, danger }: { children: React.ReactNode; onClick: () => void; danger?: boolean }) {
-  return <button onClick={onClick} className={`border px-3 py-1.5 text-xs tracking-widest uppercase ${danger ? "border-destructive text-destructive" : "border-border"}`}>{children}</button>;
+  return <Button variant="panel" onClick={onClick} className={`border px-3 py-1.5 text-xs tracking-widest uppercase ${danger ? "border-destructive text-destructive" : "border-border"}`}>{children}</Button>;
 }
 
 function Folio({ booking, onSaveNotes, reloadAll }: { booking: Booking; onSaveNotes: (n: string) => void; reloadAll: () => void }) {
@@ -221,13 +221,13 @@ function Folio({ booking, onSaveNotes, reloadAll }: { booking: Booking; onSaveNo
           <li className="flex justify-between py-1"><span>Room charges (incl. GST)</span><span>{inr(booking.total)}</span></li>
           {charges.map((c) => (
             <li key={c.id} className="flex justify-between py-1">
-              <span>{c.description} <button onClick={() => remove(c.id)} className="ml-2 text-xs text-destructive">remove</button></span>
+              <span>{c.description} <Button variant="panel" onClick={() => remove(c.id)} className="ml-2 text-xs text-destructive">remove</Button></span>
               <span>{inr(c.amount)}</span>
             </li>
           ))}
           <li className="mt-1 flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="text-gold">{inr(booking.total + extras)}</span></li>
         </ul>
-        <div className="mt-3 flex gap-2">
+        <div className="panel-form mt-3 flex gap-2">
           <input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Item, e.g. Dinner, late checkout" className="flex-1 border border-border bg-transparent px-2 py-1 text-sm" />
           <input value={amt} onChange={(e) => setAmt(e.target.value)} placeholder="₹ (− for discount)" className="w-32 border border-border bg-transparent px-2 py-1 text-sm" />
           <Btn onClick={add}>Add</Btn>
@@ -273,7 +273,7 @@ function WalkIn({ rooms, done }: { rooms: Room[]; done: () => void }) {
       <input type="number" min={1} className={inp} value={f.guests} onChange={(e) => setF({ ...f, guests: +e.target.value })} />
       <select className={inp} value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })}>{SOURCES.map((s) => <option key={s} value={s}>Source: {s}</option>)}</select>
       <select className={inp} value={f.company_id} onChange={(e) => setF({ ...f, company_id: e.target.value, source: e.target.value ? "corporate" : f.source })}><option value="">No company</option>{companies.map((c) => <option key={c.id} value={c.id}>{c.name} ({Number(c.discount_pct)}% off)</option>)}</select>
-      <button onClick={save} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground md:col-span-3">SAVE BOOKING (price calculated automatically)</button>
+      <Button variant="panel" onClick={save} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground md:col-span-3">SAVE BOOKING (price calculated automatically)</Button>
     </div>
   );
 }
@@ -284,14 +284,14 @@ function Calendar({ bookings, rooms }: { bookings: Booking[]; rooms: Room[] }) {
   const used = (roomId: string, d: string) => bookings.filter((b) => b.room_type_id === roomId && active(b.status) && b.check_in <= d && d < b.check_out).length;
   return (
     <div className="mt-6">
-      <div className="flex items-center gap-3">
+      <div className="panel-actions flex items-center gap-3">
         <Btn onClick={() => setStart(addDays(start, -14))}>‹ Prev</Btn>
         <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="border border-border bg-transparent px-2 py-1 text-sm" />
         <Btn onClick={() => setStart(addDays(start, 14))}>Next ›</Btn>
         <span className="text-xs text-muted-foreground">Rooms booked / total. Gold = full.</span>
       </div>
       <div className="mt-4 overflow-x-auto bg-background">
-        <table className="w-full text-sm">
+        <div className="panel-table-scroll" tabIndex={0}><table className="w-full text-sm">
           <thead><tr><th className="p-2 text-left">Room</th>{days.map((d) => <th key={d} className="p-2 text-xs font-normal text-muted-foreground">{d.slice(8)}/{d.slice(5, 7)}</th>)}</tr></thead>
           <tbody>
             {rooms.map((r) => (
@@ -304,7 +304,7 @@ function Calendar({ bookings, rooms }: { bookings: Booking[]; rooms: Room[] }) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );
@@ -329,7 +329,7 @@ function RoomRow({ room, canEdit, reload }: { room: Room; canEdit: boolean; relo
   }
   const inp = "w-24 border border-border bg-transparent px-2 py-1 text-sm";
   return (
-    <div className="flex flex-wrap items-center gap-4 bg-background p-4">
+    <div className="panel-form flex flex-wrap items-center gap-4 bg-background p-4">
       <p className="flex-1 font-display text-xl text-primary">{room.name}</p>
       <label className="text-xs">₹/night <input disabled={!canEdit} type="number" className={inp} value={p} onChange={(e) => setP(+e.target.value)} /></label>
       <label className="text-xs">Rooms <input disabled={!canEdit} type="number" className={inp} value={t} onChange={(e) => setT(+e.target.value)} /></label>
@@ -367,14 +367,14 @@ function Guests({ bookings }: { bookings: Booking[] }) {
           const last = [...g.stays].sort((a, b) => b.check_in.localeCompare(a.check_in))[0];
           return (
             <div key={g.key} className="bg-background p-4">
-              <button onClick={() => setOpen(open === g.key ? null : g.key)} className="flex w-full flex-wrap items-center gap-4 text-left">
+              <Button variant="panel" onClick={() => setOpen(open === g.key ? null : g.key)} className="flex w-full flex-wrap items-center gap-4 text-left">
                 <p className="flex-1 font-display text-xl text-primary">{g.name}<span className="ml-3 font-sans text-xs text-muted-foreground">{g.phone}</span></p>
                 <span className="text-xs">{done.length} stay{done.length === 1 ? "" : "s"}</span>
                 <span className="text-xs">{inr(spent)}</span>
                 <span className="text-xs text-muted-foreground">Last: {last?.check_in}</span>
-              </button>
+              </Button>
               {open === g.key && (
-                <table className="mt-3 w-full text-xs">
+                <div className="panel-table-scroll" tabIndex={0}><table className="panel-table-wide mt-3 w-full text-xs">
                   <tbody>
                     {g.stays.map((b) => (
                       <tr key={b.id} className="border-t border-border">
@@ -385,7 +385,7 @@ function Guests({ bookings }: { bookings: Booking[] }) {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               )}
             </div>
           );
@@ -421,7 +421,7 @@ function Staff() {
   return (
     <div className="mt-6">
       <p className="text-sm text-muted-foreground">Staff must first create an account on the sign-in page, then add their email here.</p>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="panel-form mt-4 flex flex-wrap gap-2">
         <input type="email" placeholder="staff@email.com" value={email} onChange={(e) => setEmail(e.target.value)}
           className="w-64 border border-border bg-background px-3 py-2 text-sm" />
         <select value={role} onChange={(e) => setRole(e.target.value as AppRole)} className="border border-border bg-background px-3 py-2 text-sm">
@@ -432,7 +432,7 @@ function Staff() {
       {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
       <div className="mt-6 grid gap-2">
         {rows.map((r) => (
-          <div key={r.user_id + r.role} className="flex items-center gap-4 bg-background p-3 text-sm">
+          <div key={r.user_id + r.role} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 bg-background p-3 text-sm">
             <span className="flex-1">{r.email}</span>
             <span className="text-xs tracking-widest uppercase text-primary">{ROLE_LABEL[r.role]}</span>
             <Btn danger onClick={() => remove(r.user_id, r.role)}>Remove</Btn>
@@ -471,7 +471,7 @@ function Payments({ booking, grand }: { booking: Booking; grand: number }) {
       </ul>
       {paid < adv && booking.status !== "cancelled" && <p className="mt-1 text-xs text-destructive">30% advance due: {inr(adv - paid)} more</p>}
       {refund !== null && <p className="mt-1 text-xs text-gold">{refund > 0 ? `Cancelled 48h+ before — refund ${inr(refund)}` : "Cancelled within 48h — no refund"}</p>}
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="panel-form mt-2 flex flex-wrap gap-2">
         <input value={amt} onChange={(e) => setAmt(e.target.value)} placeholder="₹ amount" className="w-28 border border-border bg-transparent px-2 py-1 text-sm" />
         <select value={method} onChange={(e) => setMethod(e.target.value as typeof method)} className="border border-border bg-transparent px-2 py-1 text-sm">
           <option value="cash">Cash</option><option value="upi">UPI</option><option value="card">Card</option><option value="bank">Bank</option>

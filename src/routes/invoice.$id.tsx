@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,11 +42,11 @@ function Invoice() {
   const grand = b.total + extras;
   const paid = pays.reduce((s, p) => s + (p.kind === "refund" ? -p.amount : p.amount), 0);
   return (
-    <div className="min-h-screen bg-secondary px-4 py-10 print:bg-background">
-      <div className="mx-auto max-w-3xl bg-background p-8">
-        <div className="flex items-start justify-between">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-10 print:bg-background">
+      <div className="mx-auto max-w-3xl bg-background p-4 sm:p-8">
+        <div className="panel-stack flex items-start justify-between gap-4">
           <div>
-            <p className="font-display text-3xl tracking-[0.2em] text-primary">SOUJANYA STAYS</p>
+            <p className="font-display text-2xl sm:text-3xl text-primary">SOUJANYA STAYS</p>
             <p className="text-xs text-muted-foreground">GSTIN: — (to be added)</p>
           </div>
           <div className="text-right text-sm">
@@ -60,7 +61,7 @@ function Invoice() {
           {!!b.discount_pct && <p className="text-xs text-muted-foreground">Room rate includes {Number(b.discount_pct)}% agreed discount</p>}
           <p>{b.room_types?.name}{b.room_number && ` · Room ${b.room_number}`} · {b.check_in} → {b.check_out} · {b.nights} night(s) · {b.guests} guest(s)</p>
         </div>
-        <table className="mt-6 w-full text-sm">
+        <div className="panel-table-scroll" tabIndex={0}><table className="mt-6 w-full text-sm">
           <tbody>
             <tr className="border-b border-border"><td className="py-2">Room charges (HSN 9963)</td><td className="text-right">{inr(b.subtotal)}</td></tr>
             <tr className="border-b border-border"><td className="py-2">CGST 9%</td><td className="text-right">{inr(Math.round(b.gst / 2))}</td></tr>
@@ -70,9 +71,9 @@ function Invoice() {
             {pays.map((p) => <tr key={p.id} className="text-muted-foreground"><td className="py-1">{p.kind === "refund" ? "Refund" : "Paid"} ({p.method.toUpperCase()}) {p.created_at.slice(0, 10)}</td><td className="text-right">{p.kind === "refund" ? "+" : "−"}{inr(p.amount)}</td></tr>)}
             <tr className="border-t border-border font-semibold"><td className="py-2">Balance due</td><td className="text-right">{inr(grand - paid)}</td></tr>
           </tbody>
-        </table>
+        </table></div>
         <p className="mt-6 text-xs text-muted-foreground">Payment at hotel. 30% advance confirms the booking. Free cancellation up to 48 hours before check-in.</p>
-        <button onClick={() => window.print()} className="mt-6 bg-primary px-5 py-2 text-xs tracking-widest text-primary-foreground print:hidden">DOWNLOAD / PRINT PDF</button>
+        <Button variant="panel" onClick={() => window.print()} className="mt-6 bg-primary px-5 py-2 text-xs tracking-widest text-primary-foreground print:hidden">DOWNLOAD / PRINT PDF</Button>
       </div>
     </div>
   );

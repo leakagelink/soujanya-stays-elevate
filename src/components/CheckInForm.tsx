@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { recordConsents } from "@/components/OpsExtras";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,15 +49,15 @@ function PhotoField({ label, facing, file, existing, onChange }: {
           : preview ? <img src={preview} alt={label} className="h-full w-full object-contain" />
           : <span className="text-xs text-muted-foreground">No photo</span>}
       </div>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="panel-actions mt-2 flex flex-wrap gap-2">
         {cam ? (
           <>
-            <button type="button" onClick={snap} className="bg-primary px-3 py-1.5 text-xs tracking-widest text-primary-foreground">CAPTURE</button>
-            <button type="button" onClick={stop} className="border border-border px-3 py-1.5 text-xs tracking-widest">CANCEL</button>
+            <Button variant="panel" type="button" onClick={snap} className="bg-primary px-3 py-1.5 text-xs tracking-widest text-primary-foreground">CAPTURE</Button>
+            <Button variant="panel" type="button" onClick={stop} className="border border-border px-3 py-1.5 text-xs tracking-widest">CANCEL</Button>
           </>
         ) : (
           <>
-            <button type="button" onClick={open} className="border border-border px-3 py-1.5 text-xs tracking-widest">TAKE PHOTO</button>
+            <Button variant="panel" type="button" onClick={open} className="border border-border px-3 py-1.5 text-xs tracking-widest">TAKE PHOTO</Button>
             <label className="cursor-pointer border border-border px-3 py-1.5 text-xs tracking-widest">
               UPLOAD
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && onChange(e.target.files[0])} />
@@ -119,11 +120,11 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
   const inp = "w-full border border-border bg-transparent px-2 py-1.5 text-sm";
   const L = ({ t, children }: { t: string; children: React.ReactNode }) => <label className="text-xs text-muted-foreground">{t}{children}</label>;
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-primary/60 p-4">
-      <div className="mx-auto max-w-4xl bg-background p-6">
-        <div className="flex items-center justify-between">
+    <div className="panel-page panel-modal fixed inset-0 z-50 overflow-y-auto bg-primary/60 p-4">
+      <div className="panel-modal-body mx-auto max-w-4xl bg-background p-6">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <h2 className="font-display text-3xl text-primary">Guest check-in</h2>
-          <button onClick={onClose} className="text-xs tracking-widest text-muted-foreground">CLOSE</button>
+          <Button variant="panel" onClick={onClose} className="text-xs tracking-widest text-muted-foreground">CLOSE</Button>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           <PhotoField label="Guest photo *" facing="user" file={photo} existing={booking.guest_photo_path} onChange={setPhoto} />
@@ -151,9 +152,9 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
         <label className="mt-4 flex items-start gap-2 text-sm"><input type="checkbox" checked={declared} onChange={(e) => setDeclared(e.target.checked)} className="mt-1" />
           <span>Guest declares the details above are true, and accepts the resort rules and that ID copies are kept as required by law.</span></label>
         {err && <p className="mt-3 text-sm text-destructive">{err}</p>}
-        <button disabled={busy} onClick={submit} className="mt-5 bg-gold px-6 py-2.5 text-xs tracking-widest text-primary disabled:opacity-50">
+        <Button variant="panel" disabled={busy} onClick={submit} className="mt-5 bg-gold px-6 py-2.5 text-xs tracking-widest text-primary disabled:opacity-50">
           {busy ? "SAVING…" : "COMPLETE CHECK-IN"}
-        </button>
+        </Button>
       </div>
     </div>
   );

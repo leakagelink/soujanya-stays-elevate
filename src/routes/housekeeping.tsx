@@ -1,3 +1,5 @@
+import { PanelHeader } from "@/components/PanelHeader";
+import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -80,13 +82,11 @@ function Housekeeping() {
 
   if (loading) return null;
   return (
-    <div className="min-h-screen bg-secondary px-4 py-8 md:px-8">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-8 md:px-8">
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span></Link>
-          <div className="flex gap-6 text-xs tracking-widest text-muted-foreground"><Link to="/team">TEAM</Link>{manager && <Link to="/admin">FRONT DESK</Link>}</div>
-        </div>
-        <h1 className="mt-6 font-display text-5xl text-primary">Housekeeping</h1>
+        <PanelHeader><div className="flex gap-6 text-xs tracking-widest text-muted-foreground"><Link to="/team">TEAM</Link>{manager && <Link to="/admin">FRONT DESK</Link>}</div></PanelHeader>
+        
+        <h1 className="mt-6 font-display text-4xl md:text-5xl text-primary">Housekeeping</h1>
         {!user ? <p className="mt-6">Please <Link to="/auth" className="text-gold underline">sign in</Link>.</p>
           : roles === null ? <p className="mt-6 text-muted-foreground">Checking access…</p>
           : !ok ? <p className="mt-6">This screen is for housekeeping staff. Ask the owner for Housekeeping access.</p>
@@ -112,12 +112,12 @@ function Housekeeping() {
                 <label className="text-xs"><input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} /> Only my tasks</label>
               </div>
               {manager && (
-                <div className="mt-3 flex flex-wrap gap-2 bg-background p-3">
+                <div className="panel-form mt-3 flex flex-wrap gap-2 bg-background p-3">
                   <select value={nt.room_id} onChange={(e) => setNt({ ...nt, room_id: e.target.value })} className="border border-border bg-transparent px-2 py-1 text-sm"><option value="">Room…</option>{rooms.map((r) => <option key={r.id} value={r.id}>{r.number}</option>)}</select>
                   <select value={nt.kind} onChange={(e) => setNt({ ...nt, kind: e.target.value })} className="border border-border bg-transparent px-2 py-1 text-sm">{KINDS.map((k) => <option key={k} value={k}>{k.replace("_", " ")}</option>)}</select>
                   <select value={nt.assigned_to} onChange={(e) => setNt({ ...nt, assigned_to: e.target.value })} className="border border-border bg-transparent px-2 py-1 text-sm"><option value="">Unassigned</option>{staff.map((s) => <option key={s.user_id} value={s.user_id}>{s.email}</option>)}</select>
                   <input value={nt.notes} onChange={(e) => setNt({ ...nt, notes: e.target.value })} placeholder="Notes" className="flex-1 border border-border bg-transparent px-2 py-1 text-sm" />
-                  <button onClick={create} className="bg-gold px-4 py-1 text-xs tracking-widest text-primary">ADD TASK</button>
+                  <Button variant="panel" onClick={create} className="bg-gold px-4 py-1 text-xs tracking-widest text-primary">ADD TASK</Button>
                 </div>
               )}
               <ul className="mt-3 grid gap-2">
@@ -131,7 +131,7 @@ function Housekeeping() {
                       <select value={t.assigned_to ?? ""} onChange={(e) => assign(t, e.target.value)} className="border border-border bg-transparent px-2 py-1 text-xs"><option value="">Unassigned</option>{staff.map((s) => <option key={s.user_id} value={s.user_id}>{s.email}</option>)}</select>
                     ) : <span className="text-xs">{who(t.assigned_to)}</span>}
                     {t.status === "done" ? <span className="text-xs uppercase">Done {t.completed_at && new Date(t.completed_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
-                      : <button onClick={() => taskStep(t)} className="bg-primary px-3 py-1.5 text-xs tracking-widest text-primary-foreground">{t.status === "todo" ? "START" : "MARK DONE"}</button>}
+                      : <Button variant="panel" onClick={() => taskStep(t)} className="bg-primary px-3 py-1.5 text-xs tracking-widest text-primary-foreground">{t.status === "todo" ? "START" : "MARK DONE"}</Button>}
                   </li>
                 ))}
               </ul>
