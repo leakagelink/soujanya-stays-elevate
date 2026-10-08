@@ -158,12 +158,8 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mr-2 text-gold">{inr(b.total)}</span>
                   {b.status === "pending" && <Btn onClick={() => update(b.id, { status: "confirmed" })}>Confirm</Btn>}
-                  {(b.status === "pending" || b.status === "confirmed") && (
-                    <Btn onClick={() => {
-                      const room = prompt("Room number to assign", b.room_number);
-                      if (room !== null) update(b.id, { status: "checked_in", room_number: room, checked_in_at: new Date().toISOString() });
-                    }}>Check in</Btn>
-                  )}
+                  {(b.status === "pending" || b.status === "confirmed") && <Btn onClick={() => setCheckin(b)}>Check in</Btn>}
+                  {b.status !== "pending" && b.status !== "confirmed" && b.id_number && <Btn onClick={() => setCheckin(b)}>Guest ID</Btn>}
                   {b.status === "checked_in" && <Btn onClick={() => update(b.id, { status: "checked_out", checked_out_at: new Date().toISOString() })}>Check out</Btn>}
                   {(b.status === "pending" || b.status === "confirmed") && <Btn danger onClick={() => confirm("Cancel booking?") && update(b.id, { status: "cancelled", cancelled_at: new Date().toISOString() })}>Cancel</Btn>}
                   <Btn onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Close" : "Folio & notes"}</Btn>
