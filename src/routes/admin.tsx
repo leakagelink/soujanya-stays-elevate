@@ -34,7 +34,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "rooms">("desk");
+  const [tab, setTab] = useState<"desk" | "calendar" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -72,17 +72,19 @@ function Admin() {
           <NoAccess onClaimed={loadRoles} />
         ) : (
           <>
-            <div className="mt-6 flex gap-2 border-b border-border">
-              {(["desk", "calendar", "rooms"] as const).map((t) => (
+            <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
+              {(["desk", "calendar", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {t === "desk" ? "Bookings" : t === "calendar" ? "Occupancy" : "Rooms & rates"}
+                  {{ desk: "Bookings", calendar: "Occupancy", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
                 </button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
             {tab === "calendar" && <Calendar bookings={bookings} rooms={rooms} />}
+            {tab === "guests" && <Guests bookings={bookings} />}
             {tab === "rooms" && <Rooms rooms={rooms} canEdit={isAdmin} reload={load} />}
+            {tab === "staff" && isAdmin && <Staff />}
           </>
         )}
       </div>
