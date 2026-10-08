@@ -15,7 +15,7 @@ import spa from "@/assets/spa-experience.jpg";
 
 export const Route = createFileRoute("/guest")({
   validateSearch: (search: Record<string, unknown>): { view?: GuestView } => {
-    const view = search.view;
+    const view = search["view"];
     return { view: view === "rooms" || view === "dining" || view === "experiences" || view === "concierge" || view === "account" ? view : "home" };
   },
   loader: ({ context }) => context.queryClient.ensureQueryData(roomsQuery),
@@ -43,7 +43,7 @@ function GuestApp() {
   }, [user]);
   const bk = bookings.find(b => b.id === selected);
   const serviceBk = bk && ["confirmed", "checked_in"].includes(bk.status) ? bk : undefined;
-  const guestName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0];
+  const guestName = user?.user_metadata?.["full_name"] || user?.user_metadata?.["name"] || user?.email?.split("@")[0];
   const services = [
     { view: "rooms", label: "guest.rooms", icon: BedDouble },
     { view: "dining", label: "guest.food", icon: UtensilsCrossed },
