@@ -36,7 +36,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "guests" | "rooms" | "staff">("desk");
+  const [tab, setTab] = useState<"desk" | "calendar" | "services" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -63,7 +63,7 @@ function Admin() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
           <Link to="/" className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</Link>
-          {user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}
+          <div className="flex gap-6">{isStaff && <Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link>}{user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}</div>
         </div>
         <h1 className="mt-8 font-display text-5xl text-primary">Front desk</h1>
         {!user ? (
@@ -75,15 +75,16 @@ function Admin() {
         ) : (
           <>
             <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
-              {(["desk", "calendar", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
+              {(["desk", "calendar", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {{ desk: "Bookings", calendar: "Occupancy", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
+                  {{ desk: "Bookings", calendar: "Occupancy", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
                 </button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
             {tab === "calendar" && <Calendar bookings={bookings} rooms={rooms} />}
+            {tab === "services" && <Services />}
             {tab === "guests" && <Guests bookings={bookings} />}
             {tab === "rooms" && <Rooms rooms={rooms} canEdit={isAdmin} reload={load} />}
             {tab === "staff" && isAdmin && <Staff />}
@@ -458,6 +459,51 @@ function Payments({ booking, grand }: { booking: Booking; grand: number }) {
         </select>
         <Btn onClick={() => add("payment")}>Record payment</Btn>
         <Btn danger onClick={() => add("refund")}>Refund</Btn>
+      </div>
+    </div>
+  );
+}
+
+function Services() {
+  const [reqs, setReqs] = useState<{ id: string; room_number: string; kind: string; message: string; status: string; created_at: string }[]>([]);
+  const [acts, setActs] = useState<{ id: string; date: string; slot: string; people: number; status: string; activities: { name: string } | null; bookings: { guest_name: string; room_number: string } | null }[]>([]);
+  async function load() {
+    const [r, a] = await Promise.all([
+      supabase.from("service_requests").select("id,room_number,kind,message,status,created_at").neq("status", "done").order("created_at"),
+      supabase.from("activity_bookings").select("id,date,slot,people,status,activities(name),bookings(guest_name,room_number)").gte("date", today()).neq("status", "cancelled").order("date").order("slot"),
+    ]);
+    setReqs(r.data ?? []); setActs((a.data as typeof acts) ?? []);
+  }
+  useEffect(() => { load(); const t = setInterval(load, 15000); return () => clearInterval(t); }, []);
+  return (
+    <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div>
+        <p className="text-xs tracking-widest text-muted-foreground">OPEN GUEST REQUESTS ({reqs.length})</p>
+        <ul className="mt-2 grid gap-2">
+          {reqs.length === 0 && <li className="text-sm text-muted-foreground">No open requests.</li>}
+          {reqs.map((r) => (
+            <li key={r.id} className="bg-background p-3 text-sm">
+              <p><b>Room {r.room_number || "—"}</b> · <span className="text-xs uppercase tracking-widest">{r.kind}</span> · {new Date(r.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</p>
+              <p className="mt-1">{r.message}</p>
+              <div className="mt-2 flex gap-2">
+                {r.status === "open" && <Btn onClick={async () => { await supabase.from("service_requests").update({ status: "in_progress" }).eq("id", r.id); load(); }}>Start</Btn>}
+                <Btn onClick={async () => { await supabase.from("service_requests").update({ status: "done" }).eq("id", r.id); load(); }}>Done</Btn>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="text-xs tracking-widest text-muted-foreground">UPCOMING SPA & ACTIVITIES</p>
+        <ul className="mt-2 grid gap-2">
+          {acts.length === 0 && <li className="text-sm text-muted-foreground">Nothing booked.</li>}
+          {acts.map((a) => (
+            <li key={a.id} className="flex items-center justify-between bg-background p-3 text-sm">
+              <span>{a.date} {a.slot} · <b>{a.activities?.name}</b> · {a.bookings?.guest_name} {a.bookings?.room_number && `(Room ${a.bookings.room_number})`} · {a.people} pax</span>
+              {a.status === "booked" && <Btn onClick={async () => { await supabase.from("activity_bookings").update({ status: "done" }).eq("id", a.id); load(); }}>Done</Btn>}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -64,6 +64,7 @@ function MyBookings() {
                   <p className="text-xs tracking-widest uppercase">{b.status}</p>
                   {b.status !== "cancelled" && <p className="text-xs text-muted-foreground">Pay at hotel · 30% advance {inr(Math.round(b.total * 0.3))} · free cancel till 48h before</p>}
                   <Link to="/invoice/$id" params={{ id: b.id }} className="mt-1 block text-xs text-gold underline">Invoice</Link>
+                  {(b.status === "confirmed" || b.status === "checked_in") && <Link to="/stay" className="mt-1 block text-xs text-gold underline">Dining, spa & requests</Link>}
                   {b.status === "pending" && <button onClick={() => cancel(b.id)} className="mt-2 text-xs text-destructive underline">Cancel</button>}
                 </div>
               </li>
