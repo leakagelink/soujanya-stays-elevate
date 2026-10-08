@@ -17,12 +17,14 @@ export function Food({ bk }: { bk: Bk }) {
   const [orders, setOrders] = useState<{ id: string; status: string; total: number; created_at: string; order_items: { name: string; qty: number }[] }[]>([]);
   const [msg, setMsg] = useState("");
   async function loadOrders() {
+    if (!bk.id) return;
     const { data } = await supabase.from("orders").select("id,status,total,created_at,order_items(name,qty)").eq("booking_id", bk.id).order("created_at", { ascending: false });
     setOrders(data ?? []);
   }
   useEffect(() => {
     supabase.from("menu_items").select("*").order("sort_order").then(({ data }) => setMenu(data ?? []));
     loadOrders();
+    if (!bk.id) return;
     const t = setInterval(loadOrders, 15000);
     return () => clearInterval(t);
   }, [bk.id]);
@@ -74,7 +76,7 @@ export function Food({ bk }: { bk: Bk }) {
             <ul className="mt-2 text-sm">
               {menu.filter((m) => cart[m.id]).map((m) => <li key={m.id} className="flex justify-between gap-3"><span>{cart[m.id]} × {m.name}</span><span>{inr(m.price * (cart[m.id] ?? 0))}</span></li>)}
               <li className="mt-2 flex justify-between border-t border-border pt-2 text-muted-foreground"><span>GST 5%</span><span>{inr(gst)}</span></li>
-              <li className="flex justify-between font-semibold"><span>Total</span><span className="text-gold">{inr(sub + gst)}</span></li>
+               <li className="flex justify-between font-semibold"><span>{t("guest.total")}</span><span className="text-gold">{inr(sub + gst)}</span></li>
             </ul>
           )}
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} aria-label={t("guest.orderNotes")} placeholder={t("guest.orderNotes")} rows={2} className="mt-3 w-full border border-border bg-transparent p-2 text-sm" />
