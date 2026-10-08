@@ -12,3 +12,6 @@
 - Keep homepage visual styling scoped to `.resort-home` and reusable reveal behavior in `src/components/home` so guest-site redesigns do not change staff panels.
 - Homepage room names, rates and guest limits come from the existing rooms query; bundled concept photography is presentation only, never resort inventory data.
 - Prebundle React, React DOM and Radix Slot together in Vite to prevent late dependency discovery from mixing React instances in an open preview.
+- External OTA/channel reservations must go through a `ChannelAdapter` (src/lib/channels.ts) into `channel_reservations` and then `bookings`, so one availability check (rooms_free in bookings_compute) prevents overbooking across channels.
+- Money rows (folio_charges, payments, expenses) of a day closed by night audit are locked by trigger; corrections are new rows on an open day.
+- UI copy and money formatting should go through src/lib/i18n.ts (`t`, `money`) when touched, so languages/currencies can be added later.
