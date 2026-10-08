@@ -55,7 +55,7 @@ function Kitchen() {
   return (
     <div className="min-h-screen bg-secondary px-4 py-8 md:px-8">
       <div className="flex items-center justify-between">
-        <Link to="/" className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</Link>
+        <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span></Link>
         <Link to="/admin" className="text-xs tracking-widest text-muted-foreground">FRONT DESK</Link>
       </div>
       <h1 className="mt-6 font-display text-5xl text-primary">Kitchen</h1>
