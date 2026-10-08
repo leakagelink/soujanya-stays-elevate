@@ -1,3 +1,5 @@
+import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
+const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,7 +64,7 @@ function Admin() {
     <div className="min-h-screen bg-secondary px-4 py-10 md:px-10">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link to="/" className="font-display text-xl tracking-[0.3em] text-primary md:text-2xl">SOUJANYA STAYS</Link>
+          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-xl tracking-[0.3em] text-primary md:text-2xl">SOUJANYA STAYS</span></Link>
           <div className="flex flex-wrap gap-x-6 gap-y-2">{isStaff && <><Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link><Link to="/housekeeping" className="text-xs tracking-widest text-muted-foreground">HOUSEKEEPING</Link><Link to="/team" className="text-xs tracking-widest text-muted-foreground">TEAM</Link><Link to="/finance" className="text-xs tracking-widest text-muted-foreground">FINANCE</Link></>}{user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}</div>
         </div>
         <h1 className="mt-8 font-display text-5xl text-primary">Front desk</h1>

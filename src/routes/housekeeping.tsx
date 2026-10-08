@@ -1,3 +1,5 @@
+import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
+const logo = logoAsset.url;
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +83,7 @@ function Housekeeping() {
     <div className="min-h-screen bg-secondary px-4 py-8 md:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</Link>
+          <Link to="/" className="flex items-center gap-3"><img src={logo} alt="Soujanya Stays logo" className="h-10 w-10 rounded-full object-cover" /><span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span></Link>
           <div className="flex gap-6 text-xs tracking-widest text-muted-foreground"><Link to="/team">TEAM</Link>{manager && <Link to="/admin">FRONT DESK</Link>}</div>
         </div>
         <h1 className="mt-6 font-display text-5xl text-primary">Housekeeping</h1>
