@@ -40,11 +40,11 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] Spa and activity booking with slots and capacity
 - [x] Housekeeping and maintenance requests from guest side
 
-## Phase 5 — Housekeeping + staff management
-- [ ] Room status board (dirty / cleaning / inspected / out of order)
-- [ ] Task assignment to housekeeping staff, turnarounds after checkout
-- [ ] Staff roster, shifts, attendance, leave
-- [ ] Task completion log and staff performance
+## Phase 5 — Housekeeping + staff management (DONE)
+- [x] Room status board (dirty / cleaning / inspected / out of order)
+- [x] Task assignment to housekeeping staff, turnarounds after checkout
+- [x] Staff roster, shifts, attendance, leave
+- [x] Task completion log and staff performance
 
 ## Phase 6 — Finance + business analytics
 - [ ] Revenue, occupancy, ADR, RevPAR dashboards
