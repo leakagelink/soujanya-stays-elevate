@@ -37,15 +37,15 @@ function AuthPage() {
       setMsg(error ? error.message : "Check your email to confirm your account, then sign in.");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
-      if (error) setMsg(error.message); else nav({ to: "/" , hash: "book" });
+      if (error) setMsg(error.message); else nav({ to: "/guest", search: { view: "home" } });
     }
     setBusy(false);
   }
 
   async function google() {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/guest` });
     if (r.error) setMsg(String(r.error.message ?? r.error));
-    else if (!r.redirected) nav({ to: "/", hash: "book" });
+    else if (!r.redirected) nav({ to: "/guest", search: { view: "home" } });
   }
 
   return (

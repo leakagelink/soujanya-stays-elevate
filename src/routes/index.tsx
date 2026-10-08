@@ -102,14 +102,14 @@ function Index() {
             <a href="#rooms" className="transition-colors hover:text-accent">ROOMS & VILLAS</a>
             <a href="#experiences" className="transition-colors hover:text-accent">EXPERIENCES</a>
             <a href="#book" className="transition-colors hover:text-accent">RESERVATIONS</a>
-            <Button asChild className="home-glass rounded-sm px-6"><Link to={user ? "/my-bookings" : "/auth"}>{user ? "MY BOOKINGS" : "SIGN IN"}</Link></Button>
+            <Button asChild className="home-glass rounded-sm px-6"><Link to={user ? "/guest" : "/auth"}>{user ? "MY GUEST APP" : "SIGN IN"}</Link></Button>
           </nav>
           <Button variant="ghost" size="icon" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)} className="text-ivory hover:bg-ivory/10 lg:hidden">{menuOpen ? <X /> : <Menu />}</Button>
           {menuOpen && <nav aria-label="Mobile navigation" className="absolute inset-x-0 top-full flex flex-col gap-1 border border-gold/30 bg-primary p-4 shadow-sm lg:hidden">
             <Button variant="ghost" onClick={() => scrollTo("rooms")} className="justify-start text-ivory">Rooms & Villas</Button>
             <Button variant="ghost" onClick={() => scrollTo("experiences")} className="justify-start text-ivory">Experiences</Button>
             <Button variant="ghost" onClick={() => scrollTo("book")} className="justify-start text-ivory">Reservations</Button>
-            <Button asChild className="home-gold mt-2"><Link to={user ? "/my-bookings" : "/auth"}>{user ? "My bookings" : "Sign in"}</Link></Button>
+            <Button asChild className="home-gold mt-2"><Link to={user ? "/guest" : "/auth"}>{user ? "My guest app" : "Sign in"}</Link></Button>
           </nav>}
         </header>
         <div className="hero-copy home-shell relative z-10 mt-auto pb-12 text-ivory md:pb-20">
