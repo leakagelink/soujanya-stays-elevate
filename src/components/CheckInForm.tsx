@@ -146,7 +146,10 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
           <L t="Purpose of visit"><select className={inp} value={f.purpose} onChange={set("purpose")}>{["Leisure", "Business", "Wedding / event", "Other"].map((t) => <option key={t}>{t}</option>)}</select></L>
           <L t="Vehicle number"><input className={inp} value={f.vehicle_number} onChange={set("vehicle_number")} /></L>
           <L t="Room number *"><input className={inp} value={f.room_number} onChange={set("room_number")} /></L>
+          <L t="ID verification"><select className={inp} value={f.id_verification} onChange={set("id_verification")}><option value="pending">Pending</option><option value="verified">Verified (matches guest)</option><option value="rejected">Rejected</option></select></L>
         </div>
+        <label className="mt-4 flex items-start gap-2 text-sm"><input type="checkbox" checked={declared} onChange={(e) => setDeclared(e.target.checked)} className="mt-1" />
+          <span>Guest declares the details above are true, and accepts the resort rules and that ID copies are kept as required by law.</span></label>
         {err && <p className="mt-3 text-sm text-destructive">{err}</p>}
         <button disabled={busy} onClick={submit} className="mt-5 bg-gold px-6 py-2.5 text-xs tracking-widest text-primary disabled:opacity-50">
           {busy ? "SAVING…" : "COMPLETE CHECK-IN"}
