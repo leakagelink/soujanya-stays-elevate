@@ -2,6 +2,11 @@
 
 Status legend: [x] done · [ ] pending · [~] in progress
 
+## Current request — Home page redesign
+- [~] Choose logo-led visual direction with resort imagery and animations
+- [ ] Implement selected home design while preserving booking functionality
+- [ ] Verify imagery, navigation and layout on desktop and mobile
+
 ## Phase 0 — Guest website front (DONE)
 - [x] Brand look: forest green / gold / ivory, Cormorant Garamond + Karla
 - [x] Hero section with resort photo
