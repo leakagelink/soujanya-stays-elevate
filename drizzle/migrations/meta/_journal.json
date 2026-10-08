@@ -64,6 +64,13 @@
       "when": 1791437381183,
       "tag": "0008_finance",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791439765109,
+      "tag": "0009_revoke_anon_definer",
+      "breakpoints": true
     }
   ]
 }
