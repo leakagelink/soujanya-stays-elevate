@@ -71,6 +71,13 @@
       "when": 1791439765109,
       "tag": "0009_revoke_anon_definer",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791451449685,
+      "tag": "0010_front_desk_extras",
+      "breakpoints": true
     }
   ]
 }
