@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/rooms";
 import { advanceDue, refundDue } from "@/lib/policy";
 import { CheckInForm } from "@/components/CheckInForm";
+import { Corporate, Groups, Events, Cash, SOURCES, useCompanies } from "@/components/BusinessExtras";
 import { ModifyBooking, BookingHistory, DepositAndExtras, WaitlistPanel, NightAudit } from "@/components/FrontDeskExtras";
 
 export const Route = createFileRoute("/admin")({
@@ -39,7 +40,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "waitlist" | "audit" | "services" | "guests" | "rooms" | "staff">("desk");
+  const [tab, setTab] = useState<"desk" | "calendar" | "waitlist" | "audit" | "groups" | "corporate" | "events" | "cash" | "services" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -78,15 +79,19 @@ function Admin() {
         ) : (
           <>
             <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
-              {(["desk", "calendar", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
+              {(["desk", "calendar", "groups", "corporate", "events", "cash", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {{ desk: "Bookings", calendar: "Occupancy", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
+                  {{ desk: "Bookings", calendar: "Occupancy", groups: "Groups", corporate: "Corporate", events: "Banquets & events", cash: "Cash drawer", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
                 </button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
             {tab === "calendar" && <Calendar bookings={bookings} rooms={rooms} />}
+            {tab === "groups" && <Groups rooms={rooms} reload={load} />}
+            {tab === "corporate" && <Corporate />}
+            {tab === "events" && <Events />}
+            {tab === "cash" && <Cash />}
             {tab === "waitlist" && <WaitlistPanel />}
             {tab === "audit" && <NightAudit canEditSettings={isAdmin} />}
             {tab === "services" && <Services />}
@@ -150,7 +155,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
             {f === "inhouse" ? "In-house" : f === "arrivals" ? "Today's arrivals" : f === "departures" ? "Today's departures" : "All"} ({counts[f]})
           </button>
         ))}
-        <button onClick={() => setWalkin(!walkin)} className="ml-auto bg-gold px-4 py-2 text-xs tracking-widest text-primary">+ WALK-IN</button>
+        <button onClick={() => setWalkin(!walkin)} className="ml-auto bg-gold px-4 py-2 text-xs tracking-widest text-primary">+ NEW BOOKING</button>
       </div>
       {checkin && <CheckInForm booking={checkin} onClose={() => setCheckin(null)} onDone={() => { setCheckin(null); reload(); }} />}
       {walkin && <WalkIn rooms={rooms} done={() => { setWalkin(false); reload(); }} />}
@@ -241,12 +246,13 @@ function Folio({ booking, onSaveNotes, reloadAll }: { booking: Booking; onSaveNo
 }
 
 function WalkIn({ rooms, done }: { rooms: Room[]; done: () => void }) {
-  const [f, setF] = useState({ guest_name: "", phone: "", room_type_id: rooms[0]?.id ?? "", check_in: today(), check_out: addDays(today(), 1), guests: 2 });
+  const [f, setF] = useState({ guest_name: "", phone: "", room_type_id: rooms[0]?.id ?? "", check_in: today(), check_out: addDays(today(), 1), guests: 2, source: "walk-in", company_id: "" });
+  const { list: companies } = useCompanies();
   async function save() {
     const { data: u } = await supabase.auth.getUser();
     if (!f.guest_name.trim()) return alert("Guest name required");
     const { error } = await supabase.from("bookings").insert({
-      ...f, user_id: u.user!.id, status: "confirmed", source: "walk-in", nights: 0, subtotal: 0, gst: 0, total: 0,
+      ...f, company_id: f.company_id || null, user_id: u.user!.id, status: "confirmed", nights: 0, subtotal: 0, gst: 0, total: 0,
     });
     if (error) return alert(error.message);
     done();
@@ -262,7 +268,9 @@ function WalkIn({ rooms, done }: { rooms: Room[]; done: () => void }) {
       <input type="date" className={inp} value={f.check_in} onChange={(e) => setF({ ...f, check_in: e.target.value })} />
       <input type="date" className={inp} value={f.check_out} onChange={(e) => setF({ ...f, check_out: e.target.value })} />
       <input type="number" min={1} className={inp} value={f.guests} onChange={(e) => setF({ ...f, guests: +e.target.value })} />
-      <button onClick={save} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground md:col-span-3">SAVE WALK-IN (price calculated automatically)</button>
+      <select className={inp} value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })}>{SOURCES.map((s) => <option key={s} value={s}>Source: {s}</option>)}</select>
+      <select className={inp} value={f.company_id} onChange={(e) => setF({ ...f, company_id: e.target.value, source: e.target.value ? "corporate" : f.source })}><option value="">No company</option>{companies.map((c) => <option key={c.id} value={c.id}>{c.name} ({Number(c.discount_pct)}% off)</option>)}</select>
+      <button onClick={save} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground md:col-span-3">SAVE BOOKING (price calculated automatically)</button>
     </div>
   );
 }
