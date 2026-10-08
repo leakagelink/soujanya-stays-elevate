@@ -53,10 +53,10 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [x] CSV / PDF exports and date-range filters
 
 ## Phase 7 — Hardening and launch
-- [ ] Role-based access checks on every panel
-- [ ] Mobile layout pass across all panels
-- [ ] Empty states, loading and error states
-- [ ] SEO metadata, final QA, publish
+- [x] Role-based access checks on every panel
+- [x] Mobile layout pass across all panels
+- [x] Empty states, loading and error states
+- [x] SEO metadata, final QA (publish when owner is ready)
 
 ## Blocked on user input
 - Official logo file
