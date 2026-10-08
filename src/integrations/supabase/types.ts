@@ -107,6 +107,27 @@ export type Database = {
           },
         ]
       }
+      attendance: {
+        Row: {
+          clock_in: string
+          clock_out: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          clock_in?: string
+          clock_out?: string | null
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          clock_in?: string
+          clock_out?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           address: string
@@ -263,6 +284,83 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      hk_tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          id: string
+          kind: string
+          notes: string
+          room_id: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          notes?: string
+          room_id: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          notes?: string
+          room_id?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hk_tasks_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leave_requests: {
+        Row: {
+          created_at: string
+          from_date: string
+          id: string
+          reason: string
+          status: string
+          to_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_date: string
+          id?: string
+          reason?: string
+          status?: string
+          to_date: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          from_date?: string
+          id?: string
+          reason?: string
+          status?: string
+          to_date?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       menu_items: {
         Row: {
@@ -463,6 +561,41 @@ export type Database = {
         }
         Relationships: []
       }
+      rooms: {
+        Row: {
+          hk_status: string
+          id: string
+          note: string
+          number: string
+          room_type_id: string
+          updated_at: string
+        }
+        Insert: {
+          hk_status?: string
+          id?: string
+          note?: string
+          number: string
+          room_type_id: string
+          updated_at?: string
+        }
+        Update: {
+          hk_status?: string
+          id?: string
+          note?: string
+          number?: string
+          room_type_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_room_type_id_fkey"
+            columns: ["room_type_id"]
+            isOneToOne: false
+            referencedRelation: "room_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seasons: {
         Row: {
           created_at: string
@@ -531,6 +664,36 @@ export type Database = {
           },
         ]
       }
+      shifts: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string
+          id: string
+          note: string
+          start_time: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time: string
+          id?: string
+          note?: string
+          start_time: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string
+          id?: string
+          note?: string
+          start_time?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -585,6 +748,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_any_staff: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       list_staff: {
         Args: never
@@ -604,6 +768,14 @@ export type Database = {
           _user_id: string
         }
         Returns: undefined
+      }
+      staff_directory: {
+        Args: never
+        Returns: {
+          email: string
+          roles: string[]
+          user_id: string
+        }[]
       }
     }
     Enums: {

@@ -50,6 +50,13 @@
       "when": 1791434872008,
       "tag": "0006_guest_services",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791435179877,
+      "tag": "0007_housekeeping_staff",
+      "breakpoints": true
     }
   ]
 }
