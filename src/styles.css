@@ -223,3 +223,51 @@
   .panel-page .panel-table-scroll { overflow: visible; }
   .panel-page .panel-table-wide { min-width: 0; }
 }
+
+/* Guest shopping experience: isolated from property-management tools. */
+.guest-app { --guest-shadow: 0 12px 36px color-mix(in oklab, var(--primary) 7%, transparent); --guest-scrim: linear-gradient(90deg, color-mix(in oklab, var(--primary) 80%, transparent), color-mix(in oklab, var(--primary) 5%, transparent)); background: color-mix(in oklab, var(--card) 82%, var(--background)); }
+.guest-container { width: min(100% - 64px, 1460px); margin-inline: auto; }
+.guest-header { position: sticky; top: 0; z-index: 30; }
+.guest-header .panel-header { min-height: 84px; }
+.guest-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 48px; }
+.guest-sidebar { position: sticky; top: 112px; align-self: start; padding-block: 32px; }
+.guest-main { padding-block: 32px 60px; }
+.guest-eyebrow { font-size: 11px; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 8px; }
+.guest-heading { font-family: var(--font-display); font-size: 44px; line-height: 1.1; color: var(--primary); }
+.guest-hero { position: relative; height: 320px; overflow: hidden; background: var(--primary); }
+.guest-hero > img, .guest-service-cover > img { width: 100%; height: 100%; object-fit: cover; }
+.guest-hero > img { animation: guest-photo 16s ease-in-out infinite alternate; }
+.guest-hero-shade { position: absolute; inset: 0; background: var(--guest-scrim); }
+.guest-hero-copy { position: absolute; left: 36px; right: 28px; top: 50%; transform: translateY(-50%); color: var(--ivory); max-width: 510px; }
+.guest-quick-actions { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); padding-block: 20px 32px; gap: 12px; }
+.guest-quick-action { height: 100px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; color: var(--primary); }
+.guest-quick-action span { width: 44px; height: 44px; display: grid; place-items: center; background: var(--secondary); border-radius: 50%; }
+.guest-quick-action span svg { width: 21px; height: 21px; }
+.guest-room-grid, .guest-promo-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.guest-product, .guest-promo { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+.guest-product:hover, .guest-promo:hover { transform: translateY(-4px); box-shadow: var(--guest-shadow); }
+.guest-room-image { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+.guest-room-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
+.guest-product:hover img { transform: scale(1.035); }
+.guest-capacity { position: absolute; right: 14px; top: 14px; display: flex; gap: 6px; align-items: center; background: var(--card); color: var(--primary); padding: 7px 10px; font-size: 12px; border-radius: 4px; }
+.guest-promo > img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.guest-stay-strip { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 16px; align-items: center; padding: 20px 0; border-block: 1px solid var(--border); }
+.guest-search { display: flex; gap: 12px; align-items: center; min-height: 48px; padding: 0 16px; border: 1px solid var(--border); background: var(--card); border-radius: 6px; color: var(--muted-foreground); }
+.guest-search input { width: 100%; min-width: 0; background: transparent; outline: none; color: var(--foreground); }
+.guest-search:focus-within { outline: 2px solid var(--ring); }
+.guest-service-cover { position: relative; height: 240px; overflow: hidden; }
+.guest-service-title { position: absolute; bottom: 28px; left: 28px; right: 28px; color: var(--ivory); max-width: 450px; }
+.guest-menu-item, .guest-basket, .guest-experience-card { border-radius: 8px; }
+.guest-experience-card { display: block; white-space: normal; height: auto; }
+.guest-bottom-nav { display: none; }
+.guest-modal-backdrop { position: fixed; inset: 0; background: color-mix(in oklab, var(--primary) 65%, transparent); z-index: 60; display: grid; place-items: center; padding: 20px; }
+.guest-booking-modal { background: var(--card); width: min(100%, 560px); max-height: 90svh; overflow-y: auto; border-radius: 8px; padding: 28px; box-shadow: var(--guest-shadow); }
+.guest-booking-modal label { font-size: 13px; }
+.guest-booking-modal input:not([type=checkbox]) { display: block; width: 100%; min-width: 0; border: 1px solid var(--input); background: var(--background); padding: 12px; margin-top: 6px; border-radius: 4px; }
+.guest-booking-modal input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+.guest-enter { animation: guest-enter .55s ease both; }
+@keyframes guest-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes guest-photo { from { transform: scale(1); } to { transform: scale(1.04); } }
+@media (max-width: 1023px) { .guest-layout { display: block; } .guest-sidebar { display: none; } .guest-main { padding-bottom: 110px; } .guest-bottom-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; padding: 8px 8px max(8px,env(safe-area-inset-bottom)); } .guest-nav-item { flex-direction: column; gap: 5px; font-size: 10px; height: 54px; white-space: normal; padding: 4px; text-align: center; } .guest-app.panel-page { padding-block: 0; } }
+@media (max-width: 639px) { .guest-container { width: calc(100% - 32px); } .guest-header .panel-header { min-height: 72px; } .guest-main { padding-top: 24px; } .guest-heading { font-size: 36px; } .guest-hero { height: 300px; } .guest-hero-copy { left: 24px; right: 24px; } .guest-hero-copy h2 { font-size: 40px; } .guest-quick-actions { gap: 0; } .guest-quick-action { font-size: 11px; padding-inline: 2px; white-space: normal; } .guest-room-grid, .guest-promo-grid { grid-template-columns: minmax(0,1fr); gap: 20px; } .guest-stay-strip { grid-template-columns: auto minmax(0,1fr); } .guest-stay-strip > a { grid-column: 2; justify-self: start; } .guest-booking-modal { padding: 20px; } .guest-service-title { font-size: 32px; left: 20px; bottom: 20px; } }
+@media (prefers-reduced-motion: reduce) { .guest-app *, .guest-app *::before, .guest-app *::after { animation: none !important; transition: none !important; } }
