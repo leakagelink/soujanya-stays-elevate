@@ -72,5 +72,5 @@ Status legend: [x] done · [ ] pending · [~] in progress
 ## Feature list v2 (27 items) — in groups
 - [x] Group 1 Booking & front desk: booking change + history, waitlist, early/late fees, security deposit, minibar, night audit, overbooking block
 - [x] Group 2 Restaurant & kitchen: tables, kitchen stock, recipes/food cost, suppliers
-- [ ] Group 3 Business & groups: corporate, group, banquet/events, booking source, cash, expenses
+- [x] Group 3 Business & groups: corporate, group, banquet/events, booking source, cash, expenses
 - [ ] Group 4 Checks & reports: daily report, digital consent, monitoring, audit, end-to-end tests
