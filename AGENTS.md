@@ -16,3 +16,4 @@
 - Money rows (folio_charges, payments, expenses) of a day closed by night audit are locked by trigger; corrections are new rows on an open day.
 - UI copy and money formatting should go through src/lib/i18n.ts (`t`, `money`) when touched, so languages/currencies can be added later.
 - Operational and account screens use `.panel-page`, shared `PanelHeader`, and local table scroll containers so mobile layout changes stay isolated from the resort homepage.
+- Guest routes share `GuestShell` and guest service modules with styling scoped to `.guest-app`; this keeps the shopping-style guest experience isolated from staff panels and reuses existing booking/order actions.
