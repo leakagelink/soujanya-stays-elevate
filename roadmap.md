@@ -2,6 +2,11 @@
 
 Status legend: [x] done · [ ] pending · [~] in progress
 
+## Current request — Modern guest app
+- [~] Build guest home with room booking, dining, experiences, requests and account navigation
+- [ ] Modernize guest bookings and stay services with imagery and reduced-motion-safe animation
+- [ ] Verify guest navigation, booking and order controls with signed-in data
+
 ## Current request — Mobile optimization
 - [x] Optimize staff and guest panels, forms, tables, tabs and check-in on phones
 - [x] Verify panel layouts at phone, tablet and desktop sizes; signed-in front desk, finance and team screens checked, with booking-form input exercised without saving transactions
