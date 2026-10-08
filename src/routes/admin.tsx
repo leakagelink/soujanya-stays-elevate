@@ -61,9 +61,9 @@ function Admin() {
   return (
     <div className="min-h-screen bg-secondary px-4 py-10 md:px-10">
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</Link>
-          <div className="flex gap-6">{isStaff && <><Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link><Link to="/housekeeping" className="text-xs tracking-widest text-muted-foreground">HOUSEKEEPING</Link><Link to="/team" className="text-xs tracking-widest text-muted-foreground">TEAM</Link><Link to="/finance" className="text-xs tracking-widest text-muted-foreground">FINANCE</Link></>}{user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}</div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Link to="/" className="font-display text-xl tracking-[0.3em] text-primary md:text-2xl">SOUJANYA STAYS</Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">{isStaff && <><Link to="/kitchen" className="text-xs tracking-widest text-muted-foreground">KITCHEN</Link><Link to="/housekeeping" className="text-xs tracking-widest text-muted-foreground">HOUSEKEEPING</Link><Link to="/team" className="text-xs tracking-widest text-muted-foreground">TEAM</Link><Link to="/finance" className="text-xs tracking-widest text-muted-foreground">FINANCE</Link></>}{user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}</div>
         </div>
         <h1 className="mt-8 font-display text-5xl text-primary">Front desk</h1>
         {!user ? (
