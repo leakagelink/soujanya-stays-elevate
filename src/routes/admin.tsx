@@ -124,7 +124,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
     all: bookings.length,
   };
 
-  async function update(id: string, patch: Record<string, unknown>) {
+  async function update(id: string, patch: import("@/integrations/supabase/types").TablesUpdate<"bookings">) {
     const { error } = await supabase.from("bookings").update(patch).eq("id", id);
     if (error) alert(error.message);
     reload();
