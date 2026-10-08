@@ -8,6 +8,7 @@ import { inr } from "@/lib/rooms";
 import { advanceDue, refundDue } from "@/lib/policy";
 import { CheckInForm } from "@/components/CheckInForm";
 import { Corporate, Groups, Events, Cash, SOURCES, useCompanies } from "@/components/BusinessExtras";
+import { FolioSummary, SystemHealth } from "@/components/OpsExtras";
 import { ModifyBooking, BookingHistory, DepositAndExtras, WaitlistPanel, NightAudit } from "@/components/FrontDeskExtras";
 
 export const Route = createFileRoute("/admin")({
@@ -40,7 +41,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "waitlist" | "audit" | "groups" | "corporate" | "events" | "cash" | "services" | "guests" | "rooms" | "staff">("desk");
+  const [tab, setTab] = useState<"desk" | "health" | "calendar" | "waitlist" | "audit" | "groups" | "corporate" | "events" | "cash" | "services" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -79,10 +80,10 @@ function Admin() {
         ) : (
           <>
             <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
-              {(["desk", "calendar", "groups", "corporate", "events", "cash", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
+              {(["desk", "calendar", "groups", "corporate", "events", "cash", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff", "health"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {{ desk: "Bookings", calendar: "Occupancy", groups: "Groups", corporate: "Corporate", events: "Banquets & events", cash: "Cash drawer", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
+                  {{ desk: "Bookings", calendar: "Occupancy", groups: "Groups", corporate: "Corporate", events: "Banquets & events", cash: "Cash drawer", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff", health: "System check" }[t]}
                 </button>
               ))}
             </div>
@@ -98,6 +99,7 @@ function Admin() {
             {tab === "guests" && <Guests bookings={bookings} />}
             {tab === "rooms" && <Rooms rooms={rooms} canEdit={isAdmin} reload={load} />}
             {tab === "staff" && isAdmin && <Staff />}
+            {tab === "health" && isAdmin && <SystemHealth />}
           </>
         )}
       </div>
@@ -231,6 +233,7 @@ function Folio({ booking, onSaveNotes, reloadAll }: { booking: Booking; onSaveNo
           <Btn onClick={add}>Add</Btn>
         </div>
         <Payments booking={booking} grand={booking.total + extras} />
+        <FolioSummary bookingId={booking.id} room={booking.total} refreshKey={extras * 1000 + charges.length} />
         <Link to="/invoice/$id" params={{ id: booking.id }} target="_blank" className="mt-3 inline-block text-xs tracking-widest text-gold underline">OPEN GST INVOICE</Link>
       </div>
       <div>

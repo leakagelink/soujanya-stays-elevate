@@ -1,3 +1,4 @@
+import { DailyReport } from "@/components/OpsExtras";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +40,7 @@ function Finance() {
   const now = new Date();
   const [from, setFrom] = useState(iso(new Date(now.getFullYear(), now.getMonth(), 1)));
   const [to, setTo] = useState(iso(now));
-  const [tab, setTab] = useState<"dash" | "exp" | "reports">("dash");
+  const [tab, setTab] = useState<"dash" | "daily" | "exp" | "reports">("dash");
   const [bk, setBk] = useState<Bk[]>([]);
   const [rooms, setRooms] = useState(0);
   const [pays, setPays] = useState<{ amount: number; kind: string; method: string; created_at: string }[]>([]);
@@ -105,7 +106,7 @@ function Finance() {
         </div>
       </header>
       <nav className="flex gap-6 bg-background px-6 pb-3 print:hidden">
-        {([["dash", "Dashboard"], ["exp", "Expenses & bills"], ["reports", "P&L & GST"]] as const).map(([t, l]) => <button key={t} onClick={() => setTab(t)} className={`text-xs tracking-widest ${tab === t ? "text-gold" : "text-muted-foreground"}`}>{l.toUpperCase()}</button>)}
+        {([["dash", "Dashboard"], ["daily", "Daily report"], ["exp", "Expenses & bills"], ["reports", "P&L & GST"]] as const).map(([t, l]) => <button key={t} onClick={() => setTab(t)} className={`text-xs tracking-widest ${tab === t ? "text-gold" : "text-muted-foreground"}`}>{l.toUpperCase()}</button>)}
       </nav>
       <main className="mx-auto max-w-6xl space-y-6 p-6">
         <p className="text-sm text-muted-foreground">Period: {from} to {to}</p>
@@ -147,6 +148,7 @@ function Finance() {
           </table>
           <button onClick={() => download(`expenses_${from}_${to}.csv`, [["Date", "Category", "Vendor", "Bill no", "Description", "Amount", "GST", "Paid"], ...exps.map((e) => [e.date, e.category, e.vendor, e.bill_no, e.description, e.amount, e.gst, e.paid ? "yes" : "no"])])} className="bg-primary px-4 py-2 text-xs tracking-widest text-primary-foreground print:hidden">EXPORT EXPENSES CSV</button>
         </>}
+        {tab === "daily" && <DailyReport />}
         {tab === "reports" && <div className="grid gap-6 md:grid-cols-2">
           <section className="bg-background p-4"><h3 className="font-display text-xl text-primary">Profit & loss</h3><table className="mt-2 w-full text-sm"><tbody>
             <Row l="Room revenue (before GST)" v={k.revenue} /><Row l="Food orders (incl. GST)" v={food} /><Row l="Other extras" v={otherExtras} /><Row l="Discounts" v={discounts} /><Row l="Total income" v={income} b />

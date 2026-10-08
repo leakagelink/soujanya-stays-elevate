@@ -182,14 +182,19 @@ export function WaitlistPanel() {
 export function NightAudit({ canEditSettings }: { canEditSettings: boolean }) {
   const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
   const [date, setDate] = useState(yesterday);
-  const [rows, setRows] = useState<{ id: string; audit_date: string; arrivals: number; departures: number; in_house: number; no_shows: number; occupied_rooms: number; total_rooms: number; room_revenue: number; extras_revenue: number; collected: number }[]>([]);
+  const [rows, setRows] = useState<{ id: string; audit_date: string; arrivals: number; departures: number; in_house: number; no_shows: number; occupied_rooms: number; total_rooms: number; room_revenue: number; extras_revenue: number; collected: number; food_revenue: number; activity_revenue: number; other_revenue: number; taxes: number; payments: number; refunds: number; outstanding: number; discrepancies: string; status: string }[]>([]);
   const [msg, setMsg] = useState("");
   async function load() { const { data } = await supabase.from("night_audits").select("*").order("audit_date", { ascending: false }).limit(30); setRows(data ?? []); }
   useEffect(() => { load(); }, []);
   async function run() {
     if (!confirm(`Close the day ${date}? Unarrived bookings for this night will be marked no-show.`)) return;
     const { error } = await supabase.rpc("run_night_audit", { _date: date });
-    setMsg(error ? error.message : "Night audit saved."); load();
+    setMsg(error ? error.message : "Night audit saved. Review it, then close the day."); load();
+  }
+  async function close(d: string) {
+    if (!confirm(`Close ${d}? Bills and payments of this day will be locked.`)) return;
+    const { error } = await supabase.rpc("close_night_audit", { _date: d });
+    setMsg(error ? error.message : `${d} closed and locked.`); load();
   }
   return (
     <div className="mt-6">
@@ -200,10 +205,12 @@ export function NightAudit({ canEditSettings }: { canEditSettings: boolean }) {
       </div>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full bg-background text-sm">
-          <thead><tr className="text-left text-xs tracking-widest text-muted-foreground">{["Date", "Arrivals", "Departures", "In-house", "No-shows", "Occupancy", "Room revenue", "Extras", "Collected"].map((h) => <th key={h} className="p-2">{h}</th>)}</tr></thead>
+          <thead><tr className="text-left text-xs tracking-widest text-muted-foreground">{["Date", "Status", "Check-ins", "Check-outs", "In-house", "No-shows", "Occupancy", "Room", "Food", "Activities", "Other", "Taxes", "Payments", "Refunds", "Outstanding", ""].map((h) => <th key={h} className="p-2">{h}</th>)}</tr></thead>
           <tbody>{rows.map((r) => (
-            <tr key={r.id} className="border-t border-border"><td className="p-2">{r.audit_date}</td><td className="p-2">{r.arrivals}</td><td className="p-2">{r.departures}</td><td className="p-2">{r.in_house}</td><td className="p-2">{r.no_shows}</td>
-              <td className="p-2">{r.total_rooms ? Math.round((r.occupied_rooms / r.total_rooms) * 100) : 0}%</td><td className="p-2">{inr(r.room_revenue)}</td><td className="p-2">{inr(r.extras_revenue)}</td><td className="p-2">{inr(r.collected)}</td></tr>
+            <><tr key={r.id} className="border-t border-border"><td className="p-2">{r.audit_date}</td><td className="p-2 uppercase">{r.status}</td><td className="p-2">{r.arrivals}</td><td className="p-2">{r.departures}</td><td className="p-2">{r.in_house}</td><td className="p-2">{r.no_shows}</td>
+              <td className="p-2">{r.total_rooms ? Math.round((r.occupied_rooms / r.total_rooms) * 100) : 0}%</td><td className="p-2">{inr(r.room_revenue)}</td><td className="p-2">{inr(r.food_revenue)}</td><td className="p-2">{inr(r.activity_revenue)}</td><td className="p-2">{inr(r.other_revenue)}</td><td className="p-2">{inr(r.taxes)}</td><td className="p-2">{inr(r.payments)}</td><td className="p-2">{inr(r.refunds)}</td><td className="p-2">{inr(r.outstanding)}</td>
+              <td className="p-2">{r.status === "draft" && <button onClick={() => close(r.audit_date)} className={btn}>Close day</button>}</td></tr>
+              {r.discrepancies && <tr key={r.id + "d"}><td colSpan={16} className="bg-gold/10 px-2 py-1 text-xs">Check before closing: {r.discrepancies}</td></tr>}</>
           ))}</tbody>
         </table>
       </div>
