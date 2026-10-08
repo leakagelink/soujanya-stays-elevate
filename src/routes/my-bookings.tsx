@@ -1,3 +1,5 @@
+import { PanelHeader } from "@/components/PanelHeader";
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,16 +44,11 @@ function MyBookings() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary px-6 py-12 md:px-12">
+    <div className="panel-page min-h-screen bg-secondary px-4 py-6 md:px-12">
       <div className="mx-auto max-w-4xl">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Soujanya Stays logo" className="h-12 w-12 rounded-full object-cover" />
-            <span className="font-display text-2xl tracking-[0.3em] text-primary">SOUJANYA STAYS</span>
-          </Link>
-          {user && <button onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</button>}
-        </div>
-        <h1 className="mt-10 font-display text-5xl text-primary">My bookings</h1>
+        <PanelHeader>{user && <Button variant="panel" onClick={() => supabase.auth.signOut()} className="text-xs tracking-widest text-muted-foreground">SIGN OUT</Button>}</PanelHeader>
+        
+        <h1 className="mt-10 font-display text-4xl md:text-5xl text-primary">My bookings</h1>
         {loading ? null : !user ? (
           <p className="mt-6">Please <Link to="/auth" className="text-gold underline">sign in</Link> to see your bookings.</p>
         ) : rows === null ? (
@@ -61,7 +58,7 @@ function MyBookings() {
         ) : (
           <ul className="mt-8 grid gap-4">
             {rows.map((b) => (
-              <li key={b.id} className="flex flex-wrap items-center justify-between gap-4 bg-background p-6">
+              <li key={b.id} className="panel-stack flex flex-wrap items-center justify-between gap-4 bg-background p-4 sm:p-6">
                 <div>
                   <p className="font-display text-2xl text-primary">{b.room_types?.name}</p>
                   <p className="text-sm text-muted-foreground">{b.check_in} → {b.check_out} · {b.nights} night(s) · {b.guests} guest(s)</p>
@@ -73,8 +70,8 @@ function MyBookings() {
                   {b.status !== "cancelled" && <p className="text-xs text-muted-foreground">Pay at hotel · 30% advance {inr(Math.round(b.total * 0.3))} · free cancel till 48h before</p>}
                   <Link to="/invoice/$id" params={{ id: b.id }} className="mt-1 block text-xs text-gold underline">Invoice</Link>
                   {(b.status === "confirmed" || b.status === "checked_in") && <Link to="/stay" className="mt-1 block text-xs text-gold underline">Dining, spa & requests</Link>}
-                  {(b.status === "pending" || b.status === "confirmed") && <button onClick={() => setEdit(edit === b.id ? null : b.id)} className="mt-2 mr-3 text-xs text-gold underline">Change dates / room</button>}
-                  {b.status === "pending" && <button onClick={() => cancel(b.id)} className="mt-2 text-xs text-destructive underline">Cancel</button>}
+                  {(b.status === "pending" || b.status === "confirmed") && <Button variant="panel" onClick={() => setEdit(edit === b.id ? null : b.id)} className="mt-2 mr-3 text-xs text-gold underline">Change dates / room</Button>}
+                  {b.status === "pending" && <Button variant="panel" onClick={() => cancel(b.id)} className="mt-2 text-xs text-destructive underline">Cancel</Button>}
                 </div>
                 {edit === b.id && <div className="w-full"><ModifyBooking booking={b} onDone={load} /></div>}
               </li>

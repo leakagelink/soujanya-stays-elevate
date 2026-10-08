@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { inr } from "@/lib/rooms";
@@ -38,10 +39,10 @@ export function FolioSummary({ bookingId, room, refreshKey }: { bookingId: strin
   return (
     <div className="mt-4 bg-secondary p-3 text-sm">
       <p className="text-xs tracking-widest text-muted-foreground">FOLIO SUMMARY</p>
-      <ul className="mt-1 grid grid-cols-2 gap-x-6">
-        <li className="flex justify-between"><span>Room</span><span>{inr(sub)}</span></li>
-        <li className="flex justify-between"><span>Room GST 18%</span><span>{inr(t.room - sub)}</span></li>
-        {FOLIO_CATEGORIES.filter((c) => t.byCategory[c]).map((c) => <li key={c} className="flex justify-between"><span>{c}</span><span>{inr(t.byCategory[c]!)}</span></li>)}
+      <ul className="mt-1 grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+        <li className="flex justify-between gap-3"><span>Room</span><span>{inr(sub)}</span></li>
+        <li className="flex justify-between gap-3"><span>Room GST 18%</span><span>{inr(t.room - sub)}</span></li>
+        {FOLIO_CATEGORIES.filter((c) => t.byCategory[c]).map((c) => <li key={c} className="flex justify-between gap-3"><span>{c}</span><span>{inr(t.byCategory[c]!)}</span></li>)}
       </ul>
       <div className="mt-2 grid grid-cols-2 gap-x-6 border-t border-border pt-2 md:grid-cols-4">
         <span>Total <b>{inr(t.charges)}</b></span><span>Paid <b>{inr(t.paid - t.refunded)}</b></span><span>Deposit held <b>{inr(t.deposit)}</b></span>
@@ -102,14 +103,14 @@ export function DailyReport() {
   const money = (k: string) => !["Date", "Arrivals", "Departures", "Current guests", "Occupied rooms", "Available rooms", "Maintenance rooms"].includes(k);
   return (
     <div className="mt-6">
-      <div className="flex flex-wrap items-end gap-2 print:hidden">
+      <div className="panel-form flex flex-wrap items-end gap-2 print:hidden">
         <label className="text-xs">Date<input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`block ${field}`} /></label>
-        <button onClick={() => rows && download(`daily-report-${date}.csv`, rows)} className={btn}>Download CSV</button>
-        <button onClick={() => window.print()} className={btn}>Print / PDF</button>
+        <Button variant="panel" onClick={() => rows && download(`daily-report-${date}.csv`, rows)} className={btn}>Download CSV</Button>
+        <Button variant="panel" onClick={() => window.print()} className={btn}>Print / PDF</Button>
       </div>
-      <table className="mt-4 w-full max-w-xl bg-background text-sm">
+      <div className="panel-table-scroll" tabIndex={0}><table className="mt-4 w-full max-w-xl bg-background text-sm">
         <tbody>{(rows ?? []).map(([k, v]) => <tr key={k} className="border-t border-border"><td className="p-2">{k}</td><td className="p-2 text-right font-semibold">{typeof v === "number" && money(k) ? inr(v) : v}</td></tr>)}</tbody>
-      </table>
+      </table></div>
     </div>
   );
 }
@@ -148,9 +149,9 @@ export function SystemHealth() {
   useEffect(() => { run(); }, []);
   return (
     <div className="mt-6">
-      <button onClick={run} className={btn}>Re-check</button>
+      <Button variant="panel" onClick={run} className={btn}>Re-check</Button>
       <ul className="mt-3 grid gap-2 md:grid-cols-2">{checks.map((c) => (
-        <li key={c.label} className="flex justify-between bg-background p-3 text-sm"><span><span className={c.ok ? "text-primary" : "text-destructive"}>{c.ok ? "●" : "▲"}</span> {c.label}</span><span className="text-muted-foreground">{c.info}</span></li>
+        <li key={c.label} className="panel-stack flex justify-between gap-2 bg-background p-3 text-sm"><span><span className={c.ok ? "text-primary" : "text-destructive"}>{c.ok ? "●" : "▲"}</span> {c.label}</span><span className="text-muted-foreground">{c.info}</span></li>
       ))}</ul>
       <p className="mt-6 text-xs tracking-widest text-muted-foreground">GUEST ID DOCUMENT ACCESS LOG</p>
       <ul className="text-xs">{log.map((l) => <li key={l.id} className="py-0.5">{new Date(l.created_at).toLocaleString("en-IN")} · staff {l.user_id.slice(0, 8)} viewed {l.path.split("/").pop()}</li>)}</ul>

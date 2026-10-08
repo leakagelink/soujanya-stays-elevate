@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { inr } from "@/lib/rooms";
@@ -50,13 +51,13 @@ export function Corporate() {
         ))}
         <label>Discount %<input type="number" min={0} max={50} value={f.discount_pct} onChange={(e) => setF({ ...f, discount_pct: +e.target.value })} className={`block w-20 ${field}`} /></label>
         <label>Credit limit ₹<input type="number" min={0} value={f.credit_limit} onChange={(e) => setF({ ...f, credit_limit: +e.target.value })} className={`block w-28 ${field}`} /></label>
-        <button onClick={save} className={`${btn} bg-gold text-primary`}>Add company</button>
+        <Button variant="panel" onClick={save} className={`${btn} bg-gold text-primary`}>Add company</Button>
       </div>
       <ul className="mt-3 grid gap-2">{list.map((c) => { const s = stats[c.id] ?? { stays: 0, total: 0, paid: 0 }; const due = s.total - s.paid; return (
         <li key={c.id} className="flex flex-wrap justify-between gap-2 bg-background p-4 text-sm">
           <span><b className="font-display text-xl text-primary">{c.name}</b> · {Number(c.discount_pct)}% off {c.gstin && `· GSTIN ${c.gstin}`} · {c.contact_person} {c.phone}</span>
-          <span className="flex items-center gap-3">{s.stays} stay(s) · billed {inr(s.total)} · <span className={c.credit_limit && due > c.credit_limit ? "text-destructive" : "text-gold"}>due {inr(due)}{c.credit_limit ? ` / limit ${inr(c.credit_limit)}` : ""}</span>
-            <button onClick={() => remove(c.id)} className="text-xs text-destructive">remove</button></span>
+          <span className="panel-actions flex items-center gap-3">{s.stays} stay(s) · billed {inr(s.total)} · <span className={c.credit_limit && due > c.credit_limit ? "text-destructive" : "text-gold"}>due {inr(due)}{c.credit_limit ? ` / limit ${inr(c.credit_limit)}` : ""}</span>
+            <Button variant="panel" onClick={() => remove(c.id)} className="text-xs text-destructive">remove</Button></span>
         </li>); })}</ul>
     </div>
   );
@@ -104,7 +105,7 @@ export function Groups({ rooms, reload }: { rooms: { id: string; name: string; m
   return (
     <div className="mt-6">
       <div className="bg-background p-4">
-        <div className="flex flex-wrap items-end gap-2 text-xs">
+        <div className="panel-form flex flex-wrap items-end gap-2 text-xs">
           <input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Group name (e.g. Sharma wedding)" className={field} />
           <input value={f.contact_name} onChange={(e) => setF({ ...f, contact_name: e.target.value })} placeholder="Contact person" className={field} />
           <input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="Phone" className={field} />
@@ -113,18 +114,18 @@ export function Groups({ rooms, reload }: { rooms: { id: string; name: string; m
           <label>Check-out<input type="date" value={f.check_out} min={f.check_in} onChange={(e) => setF({ ...f, check_out: e.target.value })} className={`block ${field}`} /></label>
         </div>
         <ul className="mt-3 grid gap-1 text-sm md:grid-cols-2">{rooms.map((r) => (
-          <li key={r.id} className="flex items-center justify-between bg-secondary p-2">
+          <li key={r.id} className="panel-stack flex items-center justify-between gap-3 bg-secondary p-2">
             <span>{r.name} <span className="text-xs text-muted-foreground">({free[r.id] ?? "…"} free)</span></span>
-            <span className="flex gap-2 text-xs">Rooms<input type="number" min={0} max={free[r.id] ?? 0} value={lines[r.id]?.count ?? 0} onChange={(e) => setLines({ ...lines, [r.id]: { guests: lines[r.id]?.guests ?? Math.min(2, r.max_guests), count: Math.max(0, +e.target.value) } })} className={`w-14 ${field}`} />
+            <span className="flex flex-wrap items-center gap-2 text-xs">Rooms<input type="number" min={0} max={free[r.id] ?? 0} value={lines[r.id]?.count ?? 0} onChange={(e) => setLines({ ...lines, [r.id]: { guests: lines[r.id]?.guests ?? Math.min(2, r.max_guests), count: Math.max(0, +e.target.value) } })} className={`w-14 ${field}`} />
               Guests/room<input type="number" min={1} max={r.max_guests} value={lines[r.id]?.guests ?? Math.min(2, r.max_guests)} onChange={(e) => setLines({ ...lines, [r.id]: { count: lines[r.id]?.count ?? 0, guests: +e.target.value } })} className={`w-14 ${field}`} /></span>
           </li>))}</ul>
-        <button onClick={create} className={`mt-3 ${btn} bg-gold text-primary`}>Book group</button>
+        <Button variant="panel" onClick={create} className={`mt-3 ${btn} bg-gold text-primary`}>Book group</Button>
         {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
       </div>
       <ul className="mt-4 grid gap-2">{groups.map((g) => { const live = g.bookings.filter((b) => b.status !== "cancelled"); return (
         <li key={g.id} className="bg-background p-4 text-sm">
           <div className="flex flex-wrap justify-between gap-2"><span><b className="font-display text-xl text-primary">{g.name}</b> · {g.contact_name} {g.phone} · {live.length} room(s)</span>
-            <span className="flex items-center gap-2"><span className="text-gold">{inr(live.reduce((s, b) => s + b.total, 0))}</span><button onClick={() => groupStatus(g.id, "confirmed")} className={btn}>Confirm all</button><button onClick={() => groupStatus(g.id, "cancelled")} className={`${btn} text-destructive`}>Cancel all</button></span></div>
+            <span className="panel-actions flex items-center gap-2"><span className="text-gold">{inr(live.reduce((s, b) => s + b.total, 0))}</span><Button variant="panel" onClick={() => groupStatus(g.id, "confirmed")} className={btn}>Confirm all</Button><Button variant="panel" onClick={() => groupStatus(g.id, "cancelled")} className={`${btn} text-destructive`}>Cancel all</Button></span></div>
           <p className="mt-1 text-xs text-muted-foreground">{g.bookings.map((b) => `${b.room_types?.name}${b.room_number ? " #" + b.room_number : ""} (${b.status})`).join(" · ")}</p>
         </li>); })}</ul>
     </div>
@@ -151,7 +152,7 @@ export function Events() {
   async function upd(id: string, patch: Partial<Ev>) { const { error } = await supabase.from("events").update(patch).eq("id", id); if (error) alert(error.message); load(); }
   return (
     <div className="mt-6">
-      <div className="flex flex-wrap items-end gap-2 bg-background p-4 text-xs">
+      <div className="panel-form flex flex-wrap items-end gap-2 bg-background p-4 text-xs">
         <input value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Event name" className={field} />
         <select value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value })} className={field}>{["wedding", "reception", "birthday", "conference", "corporate offsite", "party", "other"].map((k) => <option key={k}>{k}</option>)}</select>
         <input value={f.client_name} onChange={(e) => setF({ ...f, client_name: e.target.value })} placeholder="Client name" className={field} />
@@ -163,7 +164,7 @@ export function Events() {
         <label>Guests<input type="number" min={1} value={f.guests} onChange={(e) => setF({ ...f, guests: +e.target.value })} className={`block w-20 ${field}`} /></label>
         <input value={f.package} onChange={(e) => setF({ ...f, package: e.target.value })} placeholder="Package (menu, decor, DJ…)" className={`min-w-60 flex-1 ${field}`} />
         <label>Price before GST ₹<input type="number" min={0} value={f.amount} onChange={(e) => setF({ ...f, amount: +e.target.value })} className={`block w-28 ${field}`} /></label>
-        <button onClick={save} className={`${btn} bg-gold text-primary`}>Save event</button>
+        <Button variant="panel" onClick={save} className={`${btn} bg-gold text-primary`}>Save event</Button>
       </div>
       <ul className="mt-4 grid gap-2">{rows.map((r) => (
         <li key={r.id} className="bg-background p-4 text-sm">
@@ -176,7 +177,7 @@ export function Events() {
             <span>{inr(r.amount)} + GST 18% {inr(r.gst)} = <b>{inr(r.total)}</b></span>
             <span className="text-gold">Paid {inr(r.paid)} · Balance {inr(r.total - r.paid)}</span>
             <input value={pay[r.id] ?? ""} onChange={(e) => setPay({ ...pay, [r.id]: e.target.value })} placeholder="₹ received" className={`w-24 ${field}`} />
-            <button onClick={() => { const n = parseInt(pay[r.id] ?? "", 10); if (n > 0) { upd(r.id, { paid: r.paid + n }); setPay({ ...pay, [r.id]: "" }); } }} className={btn}>Add payment</button>
+            <Button variant="panel" onClick={() => { const n = parseInt(pay[r.id] ?? "", 10); if (n > 0) { upd(r.id, { paid: r.paid + n }); setPay({ ...pay, [r.id]: "" }); } }} className={btn}>Add payment</Button>
           </div>
         </li>
       ))}</ul>
@@ -220,35 +221,35 @@ export function Cash() {
   return (
     <div className="mt-6">
       {!open ? (
-        <div className="flex flex-wrap items-end gap-2 bg-background p-4 text-xs">
+        <div className="panel-form flex flex-wrap items-end gap-2 bg-background p-4 text-xs">
           <label>Opening cash in drawer ₹<input type="number" min={0} value={float} onChange={(ev) => setFloat(ev.target.value)} className={`block w-28 ${field}`} /></label>
-          <button onClick={start} className={`${btn} bg-gold text-primary`}>Open drawer</button>
+          <Button variant="panel" onClick={start} className={`${btn} bg-gold text-primary`}>Open drawer</Button>
         </div>
       ) : (
         <div className="bg-background p-4">
           <p className="text-sm">Drawer open since {new Date(open.opened_at).toLocaleString("en-IN")} · opening {inr(open.opening_float)}</p>
           <p className="mt-1 font-display text-3xl text-primary">Should be in drawer: {inr(expected)}</p>
           <p className="text-xs text-muted-foreground">Opening cash + cash payments & refunds at desk + paid restaurant bills in cash + cash in/out below.</p>
-          <div className="mt-3 flex flex-wrap gap-2 text-sm">
+          <div className="panel-form mt-3 flex flex-wrap gap-2 text-sm">
             <select value={e.kind} onChange={(ev) => setE({ ...e, kind: ev.target.value })} className={field}><option value="out">Cash out (petty expense, bank deposit)</option><option value="in">Cash in</option></select>
             <input value={e.amount} onChange={(ev) => setE({ ...e, amount: ev.target.value })} placeholder="₹" className={`w-24 ${field}`} />
             <input value={e.reason} onChange={(ev) => setE({ ...e, reason: ev.target.value })} placeholder="Reason" className={`flex-1 ${field}`} />
-            <button onClick={addEntry} className={btn}>Record</button>
+            <Button variant="panel" onClick={addEntry} className={btn}>Record</Button>
           </div>
           <ul className="mt-2 text-xs">{entries.map((x) => <li key={x.id}>{new Date(x.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })} · {x.kind === "in" ? "+" : "−"}{inr(x.amount)} · {x.reason}</li>)}</ul>
-          <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-3 text-xs">
+          <div className="panel-form mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-3 text-xs">
             <label>Cash counted ₹<input type="number" min={0} value={counted} onChange={(ev) => setCounted(ev.target.value)} className={`block w-28 ${field}`} /></label>
             <input value={notes} onChange={(ev) => setNotes(ev.target.value)} placeholder="Notes" className={field} />
-            <button onClick={close} className={`${btn} bg-primary text-primary-foreground`}>Close drawer</button>
+            <Button variant="panel" onClick={close} className={`${btn} bg-primary text-primary-foreground`}>Close drawer</Button>
           </div>
         </div>
       )}
       {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
-      <table className="mt-4 w-full bg-background text-sm">
+      <div className="panel-table-scroll" tabIndex={0}><table className="panel-table-wide mt-4 w-full bg-background text-sm">
         <thead><tr className="text-left text-xs tracking-widest text-muted-foreground"><th className="p-2">Opened</th><th className="p-2">Closed</th><th className="p-2">Expected</th><th className="p-2">Counted</th><th className="p-2">Difference</th><th className="p-2">Notes</th></tr></thead>
         <tbody>{past.map((s) => { const d = (s.counted ?? 0) - (s.expected ?? 0); return (
           <tr key={s.id} className="border-t border-border"><td className="p-2">{new Date(s.opened_at).toLocaleString("en-IN")}</td><td className="p-2">{s.closed_at && new Date(s.closed_at).toLocaleString("en-IN")}</td><td className="p-2">{inr(s.expected ?? 0)}</td><td className="p-2">{inr(s.counted ?? 0)}</td><td className={`p-2 ${d < 0 ? "text-destructive" : ""}`}>{d === 0 ? "—" : (d > 0 ? "+" : "−") + inr(Math.abs(d))}</td><td className="p-2">{s.notes}</td></tr>); })}</tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

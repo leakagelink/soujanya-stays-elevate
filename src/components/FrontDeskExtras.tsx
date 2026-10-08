@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { inr } from "@/lib/rooms";
@@ -33,13 +34,13 @@ export function ModifyBooking({ booking, onDone }: {
   }
   const locked = booking.status === "checked_in";
   return (
-    <div className="mt-3 flex flex-wrap items-end gap-3 bg-secondary p-3 text-xs">
+    <div className="panel-form mt-3 flex flex-wrap items-end gap-3 bg-secondary p-3 text-xs">
       <label>Check-in<input type="date" disabled={locked} value={ci} onChange={(e) => setCi(e.target.value)} className={`block ${field}`} /></label>
       <label>Check-out<input type="date" min={ci} value={co} onChange={(e) => setCo(e.target.value)} className={`block ${field}`} /></label>
       <label>Guests<input type="number" min={1} value={g} onChange={(e) => setG(+e.target.value)} className={`block w-16 ${field}`} /></label>
       <label>Room<select disabled={locked} value={rt} onChange={(e) => setRt(e.target.value)} className={`block ${field}`}>{rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
       {free !== null && <span className={free > 0 ? "text-primary" : "text-destructive"}>{free > 0 ? `${free} free` : "Not available"}</span>}
-      <button onClick={save} disabled={free === 0} className={`${btn} bg-gold text-primary disabled:opacity-40`}>Save change</button>
+      <Button variant="panel" onClick={save} disabled={free === 0} className={`${btn} bg-gold text-primary disabled:opacity-40`}>Save change</Button>
       {msg && <p className="w-full text-gold">{msg}</p>}
     </div>
   );
@@ -105,10 +106,10 @@ export function DepositAndExtras({ bookingId, onCharged }: { bookingId: string; 
       <div>
         <p className="text-xs tracking-widest text-muted-foreground">SECURITY DEPOSIT</p>
         {!dep ? (
-          <div className="mt-2 flex flex-wrap gap-2 text-sm">
+          <div className="panel-form mt-2 flex flex-wrap gap-2 text-sm">
             <input value={amt} onChange={(e) => setAmt(e.target.value)} className={`w-24 ${field}`} placeholder={String(def)} />
             <select value={method} onChange={(e) => setMethod(e.target.value)} className={field}><option>cash</option><option>upi</option><option>card</option></select>
-            <button onClick={receive} className={btn}>Received</button>
+            <Button variant="panel" onClick={receive} className={btn}>Received</Button>
           </div>
         ) : (
           <div className="mt-2 text-sm">
@@ -116,11 +117,11 @@ export function DepositAndExtras({ bookingId, onCharged }: { bookingId: string; 
             {dep.status === "refunded" ? (
               <p className="text-muted-foreground">Refunded {inr(dep.refunded_amount)} by {dep.refund_method} on {dep.refunded_at && new Date(dep.refunded_at).toLocaleDateString("en-IN")}{dep.deduction > 0 && ` · deducted ${inr(dep.deduction)} (${dep.deduction_reason})`}</p>
             ) : (
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="panel-form mt-2 flex flex-wrap gap-2">
                 <input value={ded} onChange={(e) => setDed(e.target.value)} className={`w-20 ${field}`} placeholder="Deduct ₹" />
                 <input value={reason} onChange={(e) => setReason(e.target.value)} className={`flex-1 ${field}`} placeholder="Reason (damage…)" />
                 <select value={method} onChange={(e) => setMethod(e.target.value)} className={field}><option>cash</option><option>upi</option><option>card</option></select>
-                <button onClick={refund} className={btn}>Refund</button>
+                <Button variant="panel" onClick={refund} className={btn}>Refund</Button>
               </div>
             )}
           </div>
@@ -129,8 +130,8 @@ export function DepositAndExtras({ bookingId, onCharged }: { bookingId: string; 
       <div>
         <p className="text-xs tracking-widest text-muted-foreground">EARLY / LATE</p>
         {settings && <div className="mt-2 flex flex-wrap gap-2">
-          <button onClick={() => fee("early")} className={btn}>Early check-in {inr(settings.early_checkin_fee)}</button>
-          <button onClick={() => fee("late")} className={btn}>Late checkout {inr(settings.late_checkout_fee)}</button>
+          <Button variant="panel" onClick={() => fee("early")} className={btn}>Early check-in {inr(settings.early_checkin_fee)}</Button>
+          <Button variant="panel" onClick={() => fee("late")} className={btn}>Late checkout {inr(settings.late_checkout_fee)}</Button>
         </div>}
       </div>
       <div>
@@ -139,7 +140,7 @@ export function DepositAndExtras({ bookingId, onCharged }: { bookingId: string; 
           <li key={i.id} className="flex items-center justify-between py-0.5"><span>{i.name} · {inr(i.price)}</span>
             <input type="number" min={0} value={qty[i.id] ?? ""} onChange={(e) => setQty({ ...qty, [i.id]: Math.max(0, +e.target.value) })} className={`w-14 ${field}`} /></li>
         ))}</ul>
-        <button onClick={minibar} className={`mt-2 ${btn}`}>Add to bill</button>
+        <Button variant="panel" onClick={minibar} className={`mt-2 ${btn}`}>Add to bill</Button>
       </div>
     </div>
   );
@@ -169,8 +170,8 @@ export function WaitlistPanel() {
               {avail.has(r.id) && <span className="bg-primary px-2 py-0.5 text-xs text-primary-foreground">ROOM FREE NOW</span>}
               <span className="text-xs uppercase">{r.status}</span>
               {r.status === "waiting" && <a href={`https://wa.me/${r.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hello ${r.guest_name}, a ${r.room_types?.name} is now available at Soujanya Stays for ${r.check_in} to ${r.check_out}. Reply to book.`)}`} target="_blank" rel="noreferrer" onClick={() => set(r.id, "notified")} className={btn}>Notify</a>}
-              <button onClick={() => set(r.id, "booked")} className={btn}>Booked</button>
-              <button onClick={() => set(r.id, "cancelled")} className={btn}>Remove</button>
+              <Button variant="panel" onClick={() => set(r.id, "booked")} className={btn}>Booked</Button>
+              <Button variant="panel" onClick={() => set(r.id, "cancelled")} className={btn}>Remove</Button>
             </span>
           </li>
         ))}</ul>
@@ -198,21 +199,21 @@ export function NightAudit({ canEditSettings }: { canEditSettings: boolean }) {
   }
   return (
     <div className="mt-6">
-      <div className="flex flex-wrap items-end gap-3 bg-background p-4">
+      <div className="panel-form flex flex-wrap items-end gap-3 bg-background p-4">
         <label className="text-xs">Business date<input type="date" max={new Date().toISOString().slice(0, 10)} value={date} onChange={(e) => setDate(e.target.value)} className={`block ${field}`} /></label>
-        <button onClick={run} className={`${btn} bg-gold text-primary`}>Run night audit</button>
+        <Button variant="panel" onClick={run} className={`${btn} bg-gold text-primary`}>Run night audit</Button>
         {msg && <span className="text-sm text-gold">{msg}</span>}
       </div>
       <div className="mt-4 overflow-x-auto">
-        <table className="w-full bg-background text-sm">
+        <div className="panel-table-scroll" tabIndex={0}><table className="w-full bg-background text-sm">
           <thead><tr className="text-left text-xs tracking-widest text-muted-foreground">{["Date", "Status", "Check-ins", "Check-outs", "In-house", "No-shows", "Occupancy", "Room", "Food", "Activities", "Other", "Taxes", "Payments", "Refunds", "Outstanding", ""].map((h) => <th key={h} className="p-2">{h}</th>)}</tr></thead>
           <tbody>{rows.map((r) => (
             <><tr key={r.id} className="border-t border-border"><td className="p-2">{r.audit_date}</td><td className="p-2 uppercase">{r.status}</td><td className="p-2">{r.arrivals}</td><td className="p-2">{r.departures}</td><td className="p-2">{r.in_house}</td><td className="p-2">{r.no_shows}</td>
               <td className="p-2">{r.total_rooms ? Math.round((r.occupied_rooms / r.total_rooms) * 100) : 0}%</td><td className="p-2">{inr(r.room_revenue)}</td><td className="p-2">{inr(r.food_revenue)}</td><td className="p-2">{inr(r.activity_revenue)}</td><td className="p-2">{inr(r.other_revenue)}</td><td className="p-2">{inr(r.taxes)}</td><td className="p-2">{inr(r.payments)}</td><td className="p-2">{inr(r.refunds)}</td><td className="p-2">{inr(r.outstanding)}</td>
-              <td className="p-2">{r.status === "draft" && <button onClick={() => close(r.audit_date)} className={btn}>Close day</button>}</td></tr>
+              <td className="p-2">{r.status === "draft" && <Button variant="panel" onClick={() => close(r.audit_date)} className={btn}>Close day</Button>}</td></tr>
               {r.discrepancies && <tr key={r.id + "d"}><td colSpan={16} className="bg-gold/10 px-2 py-1 text-xs">Check before closing: {r.discrepancies}</td></tr>}</>
           ))}</tbody>
-        </table>
+        </table></div>
       </div>
       {canEditSettings && <SettingsForm />}
     </div>
@@ -233,13 +234,13 @@ function SettingsForm() {
   return (
     <div className="mt-8 bg-background p-4">
       <p className="text-xs tracking-widest text-muted-foreground">OWNER SETTINGS · FEES & DEPOSIT</p>
-      <div className="mt-3 flex flex-wrap items-end gap-4 text-xs">
+      <div className="panel-form mt-3 flex flex-wrap items-end gap-4 text-xs">
         <label>Early check-in fee ₹{num("early_checkin_fee")}</label>
         <label>Early check-in from{txt("early_checkin_from")}</label>
         <label>Late checkout fee ₹{num("late_checkout_fee")}</label>
         <label>Late checkout until{txt("late_checkout_until")}</label>
         <label>Security deposit ₹{num("security_deposit")}</label>
-        <button onClick={save} className={btn}>Save</button>
+        <Button variant="panel" onClick={save} className={btn}>Save</Button>
         {msg && <span className="text-gold">{msg}</span>}
       </div>
     </div>
