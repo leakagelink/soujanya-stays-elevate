@@ -50,7 +50,7 @@ function Housekeeping() {
     ]);
     setRooms((r.data as Room[]) ?? []); setTasks((t.data as Task[]) ?? []);
   }
-  useEffect(() => { if (ok) { load(); const i = setInterval(load, 15000); return () => clearInterval(i); } }, [ok]);
+  useEffect(() => { if (!ok) return undefined; load(); const i = setInterval(load, 15000); return () => clearInterval(i); }, [ok]);
 
   async function setStatus(room: Room, hk_status: string) {
     await supabase.from("rooms").update({ hk_status, updated_at: new Date().toISOString() }).eq("id", room.id); load();
