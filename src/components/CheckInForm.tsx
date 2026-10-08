@@ -10,7 +10,7 @@ type B = {
 const ID_TYPES = ["Aadhaar", "Passport", "Driving licence", "Voter ID", "PAN card", "Other govt ID"];
 
 function PhotoField({ label, facing, file, existing, onChange }: {
-  label: string; facing: "user" | "environment"; file: Blob | null; existing?: string | null; onChange: (b: Blob) => void;
+  label: string; facing: "user" | "environment"; file: Blob | null; existing?: string | null | undefined; onChange: (b: Blob) => void;
 }) {
   const [cam, setCam] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -20,6 +20,7 @@ function PhotoField({ label, facing, file, existing, onChange }: {
   useEffect(() => {
     if (file) { const u = URL.createObjectURL(file); setPreview(u); return () => URL.revokeObjectURL(u); }
     if (existing) supabase.storage.from("guest-docs").createSignedUrl(existing, 600).then(({ data }) => setPreview(data?.signedUrl ?? null));
+    return undefined;
   }, [file, existing]);
 
   async function open() {
