@@ -33,12 +33,12 @@ Status legend: [x] done · [ ] pending · [~] in progress
 
 - [x] Full check-in form: guest photo + ID front/back (camera or upload), ID details, address, Form C visa for foreigners
 
-## Phase 4 — Guest experience + food ordering
-- [ ] Guest portal: view booking, add extras, upgrade requests
-- [ ] Restaurant + in-room menu with categories, add-ons, availability
-- [ ] Order flow to kitchen display (new / preparing / ready / served)
-- [ ] Spa and activity booking with slots and capacity
-- [ ] Housekeeping and maintenance requests from guest side
+## Phase 4 — Guest experience + food ordering (DONE)
+- [x] Guest portal: view booking, add extras, upgrade requests
+- [x] Restaurant + in-room menu with categories, add-ons, availability
+- [x] Order flow to kitchen display (new / preparing / ready / served)
+- [x] Spa and activity booking with slots and capacity
+- [x] Housekeeping and maintenance requests from guest side
 
 ## Phase 5 — Housekeeping + staff management
 - [ ] Room status board (dirty / cleaning / inspected / out of order)
