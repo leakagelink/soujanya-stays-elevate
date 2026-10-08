@@ -34,7 +34,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "rooms">("desk");
+  const [tab, setTab] = useState<"desk" | "calendar" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -72,17 +72,19 @@ function Admin() {
           <NoAccess onClaimed={loadRoles} />
         ) : (
           <>
-            <div className="mt-6 flex gap-2 border-b border-border">
-              {(["desk", "calendar", "rooms"] as const).map((t) => (
+            <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
+              {(["desk", "calendar", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {t === "desk" ? "Bookings" : t === "calendar" ? "Occupancy" : "Rooms & rates"}
+                  {{ desk: "Bookings", calendar: "Occupancy", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
                 </button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
             {tab === "calendar" && <Calendar bookings={bookings} rooms={rooms} />}
+            {tab === "guests" && <Guests bookings={bookings} />}
             {tab === "rooms" && <Rooms rooms={rooms} canEdit={isAdmin} reload={load} />}
+            {tab === "staff" && isAdmin && <Staff />}
           </>
         )}
       </div>
@@ -311,6 +313,110 @@ function RoomRow({ room, canEdit, reload }: { room: Room; canEdit: boolean; relo
       <label className="text-xs">Rooms <input disabled={!canEdit} type="number" className={inp} value={t} onChange={(e) => setT(+e.target.value)} /></label>
       <label className="text-xs">Max guests <input disabled={!canEdit} type="number" className={inp} value={g} onChange={(e) => setG(+e.target.value)} /></label>
       {canEdit && <Btn onClick={save}>Save</Btn>}
+    </div>
+  );
+}
+
+function Guests({ bookings }: { bookings: Booking[] }) {
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
+  const guests = useMemo(() => {
+    const m = new Map<string, { key: string; name: string; phone: string; stays: Booking[] }>();
+    for (const b of bookings) {
+      const key = b.source === "walk_in" || b.source === "walk-in" ? `p:${b.phone || b.guest_name}` : `u:${b.user_id}`;
+      const g = m.get(key) ?? { key, name: b.guest_name, phone: b.phone, stays: [] };
+      g.stays.push(b); if (!g.phone && b.phone) g.phone = b.phone;
+      m.set(key, g);
+    }
+    const s = q.trim().toLowerCase();
+    return [...m.values()]
+      .filter((g) => !s || g.name.toLowerCase().includes(s) || g.phone.includes(s))
+      .sort((a, b) => b.stays.length - a.stays.length);
+  }, [bookings, q]);
+  return (
+    <div className="mt-6">
+      <input placeholder="Search by name or phone" value={q} onChange={(e) => setQ(e.target.value)}
+        className="w-full max-w-sm border border-border bg-background px-3 py-2 text-sm" />
+      <div className="mt-4 grid gap-2">
+        {guests.length === 0 && <p className="text-sm text-muted-foreground">No guests found.</p>}
+        {guests.map((g) => {
+          const done = g.stays.filter((b) => b.status !== "cancelled");
+          const spent = done.reduce((a, b) => a + b.total, 0);
+          const last = [...g.stays].sort((a, b) => b.check_in.localeCompare(a.check_in))[0];
+          return (
+            <div key={g.key} className="bg-background p-4">
+              <button onClick={() => setOpen(open === g.key ? null : g.key)} className="flex w-full flex-wrap items-center gap-4 text-left">
+                <p className="flex-1 font-display text-xl text-primary">{g.name}<span className="ml-3 font-sans text-xs text-muted-foreground">{g.phone}</span></p>
+                <span className="text-xs">{done.length} stay{done.length === 1 ? "" : "s"}</span>
+                <span className="text-xs">{inr(spent)}</span>
+                <span className="text-xs text-muted-foreground">Last: {last?.check_in}</span>
+              </button>
+              {open === g.key && (
+                <table className="mt-3 w-full text-xs">
+                  <tbody>
+                    {g.stays.map((b) => (
+                      <tr key={b.id} className="border-t border-border">
+                        <td className="py-1">{b.check_in} → {b.check_out}</td>
+                        <td>{b.room_types?.name}{b.room_number ? ` #${b.room_number}` : ""}</td>
+                        <td className="uppercase">{b.status.replace("_", " ")}</td>
+                        <td className="text-right">{inr(b.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const ROLE_LABEL: Record<string, string> = { admin: "Owner", front_desk: "Front desk", kitchen: "Kitchen", housekeeping: "Housekeeping", finance: "Finance" };
+type AppRole = "admin" | "front_desk" | "kitchen" | "housekeeping" | "finance";
+
+function Staff() {
+  const [rows, setRows] = useState<{ user_id: string; email: string; role: string }[]>([]);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<AppRole>("front_desk");
+  const [msg, setMsg] = useState("");
+  async function load() {
+    const { data, error } = await supabase.rpc("list_staff");
+    if (error) setMsg(error.message); else setRows(data ?? []);
+  }
+  useEffect(() => { load(); }, []);
+  async function add() {
+    setMsg("");
+    const { error } = await supabase.rpc("grant_staff_role", { _email: email, _role: role });
+    if (error) setMsg(error.message); else { setEmail(""); setMsg("Role added."); load(); }
+  }
+  async function remove(user_id: string, r: string) {
+    if (!confirm(`Remove ${ROLE_LABEL[r]} access?`)) return;
+    const { error } = await supabase.rpc("revoke_staff_role", { _user_id: user_id, _role: r as AppRole });
+    if (error) setMsg(error.message); else load();
+  }
+  return (
+    <div className="mt-6">
+      <p className="text-sm text-muted-foreground">Staff must first create an account on the sign-in page, then add their email here.</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <input type="email" placeholder="staff@email.com" value={email} onChange={(e) => setEmail(e.target.value)}
+          className="w-64 border border-border bg-background px-3 py-2 text-sm" />
+        <select value={role} onChange={(e) => setRole(e.target.value as AppRole)} className="border border-border bg-background px-3 py-2 text-sm">
+          {Object.entries(ROLE_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+        <Btn onClick={add}>Give access</Btn>
+      </div>
+      {msg && <p className="mt-2 text-sm text-gold">{msg}</p>}
+      <div className="mt-6 grid gap-2">
+        {rows.map((r) => (
+          <div key={r.user_id + r.role} className="flex items-center gap-4 bg-background p-3 text-sm">
+            <span className="flex-1">{r.email}</span>
+            <span className="text-xs tracking-widest uppercase text-primary">{ROLE_LABEL[r.role]}</span>
+            <Btn danger onClick={() => remove(r.user_id, r.role)}>Remove</Btn>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
