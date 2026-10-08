@@ -97,13 +97,13 @@ function Finance() {
 
   return (
     <div className="panel-page min-h-screen bg-secondary">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-4 md:px-6 print:hidden">
+      <header className="flex flex-col items-stretch justify-between gap-3 border-b border-border bg-background px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center md:px-6 print:hidden">
         <Link to="/admin" className="font-display text-2xl tracking-[0.2em] text-primary">FINANCE</Link>
-        <div className="panel-form panel-form flex flex-wrap items-center gap-2 text-sm">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-sm sm:flex sm:flex-wrap">
           <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={inp} />
           <span>→</span>
           <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className={inp} />
-          <Button variant="panel" onClick={() => window.print()} className="border border-primary px-3 py-2 text-xs tracking-widest text-primary">PRINT / PDF</Button>
+          <Button variant="panel" onClick={() => window.print()} className="col-span-3 border border-primary px-3 py-2 text-xs tracking-widest text-primary">PRINT / PDF</Button>
         </div>
       </header>
       <nav className="panel-tabs bg-background px-6 pb-3 print:hidden">

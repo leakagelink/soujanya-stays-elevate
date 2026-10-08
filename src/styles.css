@@ -211,6 +211,8 @@
   .panel-page .panel-actions > button { flex: 1 1 auto; }
   .panel-page .panel-money { white-space: nowrap; flex-shrink: 0; }
   .panel-page .panel-links { max-width: 175px; gap: 0 12px; }
+  .panel-page .panel-links > div { display: contents; }
+  .panel-page .panel-links a { white-space: nowrap; }
   .panel-page .panel-table-scroll td, .panel-page .panel-table-scroll th { padding: 10px 8px; }
   .panel-page .panel-table-wide :where(td, th) { overflow-wrap: normal; }
   .panel-page .panel-metric { font-size: 26px; }

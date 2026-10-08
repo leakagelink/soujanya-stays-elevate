@@ -3,8 +3,8 @@
 Status legend: [x] done · [ ] pending · [~] in progress
 
 ## Current request — Mobile optimization
-- [~] Optimize staff and guest panels, forms, tables, tabs and check-in on phones
-- [ ] Verify signed-in panels and navigation at phone, tablet and desktop sizes
+- [x] Optimize staff and guest panels, forms, tables, tabs and check-in on phones
+- [x] Verify panel layouts at phone, tablet and desktop sizes; signed-in front desk, finance and team screens checked, with booking-form input exercised without saving transactions
 
 ## Previous request — Home page redesign
 - [x] Choose logo-led visual direction with resort imagery and animations
