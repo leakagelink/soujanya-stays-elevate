@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/rooms";
 import { advanceDue, refundDue } from "@/lib/policy";
 import { CheckInForm } from "@/components/CheckInForm";
+import { ModifyBooking, BookingHistory, DepositAndExtras, WaitlistPanel, NightAudit } from "@/components/FrontDeskExtras";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -38,7 +39,7 @@ const active = (s: string) => s !== "cancelled" && s !== "checked_out";
 function Admin() {
   const { user, loading } = useAuth();
   const [roles, setRoles] = useState<string[] | null>(null);
-  const [tab, setTab] = useState<"desk" | "calendar" | "services" | "guests" | "rooms" | "staff">("desk");
+  const [tab, setTab] = useState<"desk" | "calendar" | "waitlist" | "audit" | "services" | "guests" | "rooms" | "staff">("desk");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -77,15 +78,17 @@ function Admin() {
         ) : (
           <>
             <div className="mt-6 flex flex-wrap gap-2 border-b border-border">
-              {(["desk", "calendar", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
+              {(["desk", "calendar", "waitlist", "audit", "services", "guests", "rooms", ...(isAdmin ? ["staff"] as const : [])] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 text-xs tracking-widest uppercase ${tab === t ? "border-b-2 border-gold text-primary" : "text-muted-foreground"}`}>
-                  {{ desk: "Bookings", calendar: "Occupancy", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
+                  {{ desk: "Bookings", calendar: "Occupancy", waitlist: "Waitlist", audit: "Night audit", services: "Requests & spa", guests: "Guest history", rooms: "Rooms & rates", staff: "Staff" }[t]}
                 </button>
               ))}
             </div>
             {tab === "desk" && <Desk bookings={bookings} rooms={rooms} reload={load} />}
             {tab === "calendar" && <Calendar bookings={bookings} rooms={rooms} />}
+            {tab === "waitlist" && <WaitlistPanel />}
+            {tab === "audit" && <NightAudit canEditSettings={isAdmin} />}
             {tab === "services" && <Services />}
             {tab === "guests" && <Guests bookings={bookings} />}
             {tab === "rooms" && <Rooms rooms={rooms} canEdit={isAdmin} reload={load} />}
@@ -171,7 +174,7 @@ function Desk({ bookings, rooms, reload }: { bookings: Booking[]; rooms: Room[];
                   <Btn onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Close" : "Folio & notes"}</Btn>
                 </div>
               </div>
-              {open === b.id && <Folio booking={b} onSaveNotes={(notes) => update(b.id, { notes })} />}
+              {open === b.id && <Folio key={b.id + b.total} booking={b} reloadAll={reload} onSaveNotes={(notes) => update(b.id, { notes })} />}
             </li>
           ))}
         </ul>
@@ -184,7 +187,7 @@ function Btn({ children, onClick, danger }: { children: React.ReactNode; onClick
   return <button onClick={onClick} className={`border px-3 py-1.5 text-xs tracking-widest uppercase ${danger ? "border-destructive text-destructive" : "border-border"}`}>{children}</button>;
 }
 
-function Folio({ booking, onSaveNotes }: { booking: Booking; onSaveNotes: (n: string) => void }) {
+function Folio({ booking, onSaveNotes, reloadAll }: { booking: Booking; onSaveNotes: (n: string) => void; reloadAll: () => void }) {
   const [charges, setCharges] = useState<Charge[]>([]);
   const [desc, setDesc] = useState("");
   const [amt, setAmt] = useState("");
@@ -229,7 +232,10 @@ function Folio({ booking, onSaveNotes }: { booking: Booking; onSaveNotes: (n: st
         <p className="text-xs tracking-widest text-muted-foreground">GUEST NOTES & PREFERENCES</p>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} className="mt-2 w-full border border-border bg-transparent p-2 text-sm" placeholder="Early check-in, allergies, anniversary…" />
         <Btn onClick={() => onSaveNotes(notes)}>Save notes</Btn>
+        {active(booking.status) && <><p className="mt-4 text-xs tracking-widest text-muted-foreground">CHANGE BOOKING</p><ModifyBooking booking={booking} onDone={reloadAll} /></>}
+        <BookingHistory bookingId={booking.id} />
       </div>
+      {active(booking.status) && <div className="md:col-span-2"><DepositAndExtras bookingId={booking.id} onCharged={load} /></div>}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { inr } from "@/lib/rooms";
+import { ModifyBooking } from "@/components/FrontDeskExtras";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 
 const logo = logoAsset.url;
@@ -21,14 +22,15 @@ export const Route = createFileRoute("/my-bookings")({
   component: MyBookings,
 });
 
-type Row = { id: string; check_in: string; check_out: string; nights: number; guests: number; total: number; status: string; room_types: { name: string } | null };
+type Row = { id: string; room_type_id: string; check_in: string; check_out: string; nights: number; guests: number; total: number; status: string; room_types: { name: string } | null };
 
 function MyBookings() {
   const { user, loading } = useAuth();
   const [rows, setRows] = useState<Row[] | null>(null);
+  const [edit, setEdit] = useState<string | null>(null);
 
   async function load() {
-    const { data } = await supabase.from("bookings").select("id,check_in,check_out,nights,guests,total,status,room_types(name)").order("created_at", { ascending: false });
+    const { data } = await supabase.from("bookings").select("id,room_type_id,check_in,check_out,nights,guests,total,status,room_types(name)").order("created_at", { ascending: false });
     setRows((data as Row[]) ?? []);
   }
   useEffect(() => { if (user) load(); }, [user]);
@@ -71,8 +73,10 @@ function MyBookings() {
                   {b.status !== "cancelled" && <p className="text-xs text-muted-foreground">Pay at hotel · 30% advance {inr(Math.round(b.total * 0.3))} · free cancel till 48h before</p>}
                   <Link to="/invoice/$id" params={{ id: b.id }} className="mt-1 block text-xs text-gold underline">Invoice</Link>
                   {(b.status === "confirmed" || b.status === "checked_in") && <Link to="/stay" className="mt-1 block text-xs text-gold underline">Dining, spa & requests</Link>}
+                  {(b.status === "pending" || b.status === "confirmed") && <button onClick={() => setEdit(edit === b.id ? null : b.id)} className="mt-2 mr-3 text-xs text-gold underline">Change dates / room</button>}
                   {b.status === "pending" && <button onClick={() => cancel(b.id)} className="mt-2 text-xs text-destructive underline">Cancel</button>}
                 </div>
+                {edit === b.id && <div className="w-full"><ModifyBooking booking={b} onDone={load} /></div>}
               </li>
             ))}
           </ul>
