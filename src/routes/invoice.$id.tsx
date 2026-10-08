@@ -18,7 +18,7 @@ export const Route = createFileRoute("/invoice/$id")({
   component: Invoice,
 });
 
-type B = { id: string; guest_name: string; phone: string; check_in: string; check_out: string; nights: number; guests: number; subtotal: number; gst: number; total: number; status: string; room_number: string; room_types: { name: string } | null };
+type B = { id: string; guest_name: string; phone: string; check_in: string; check_out: string; nights: number; guests: number; subtotal: number; gst: number; total: number; status: string; room_number: string; room_types: { name: string } | null; discount_pct?: number; companies?: { name: string; gstin: string; billing_address: string } | null };
 
 function Invoice() {
   const { id } = Route.useParams();
@@ -28,7 +28,7 @@ function Invoice() {
   useEffect(() => {
     (async () => {
       const [x, c, p] = await Promise.all([
-        supabase.from("bookings").select("*,room_types(name)").eq("id", id).maybeSingle(),
+        supabase.from("bookings").select("*,room_types(name),companies(name,gstin,billing_address)").eq("id", id).maybeSingle(),
         supabase.from("folio_charges").select("id,description,amount").eq("booking_id", id).order("created_at"),
         supabase.from("payments").select("id,amount,kind,method,created_at").eq("booking_id", id).order("created_at"),
       ]);
@@ -56,6 +56,8 @@ function Invoice() {
         </div>
         <div className="mt-6 text-sm">
           <p><b>{b.guest_name}</b> {b.phone && `· ${b.phone}`}</p>
+          {b.companies && <p>Bill to: <b>{b.companies.name}</b>{b.companies.gstin && ` · GSTIN ${b.companies.gstin}`}{b.companies.billing_address && ` · ${b.companies.billing_address}`}</p>}
+          {!!b.discount_pct && <p className="text-xs text-muted-foreground">Room rate includes {Number(b.discount_pct)}% agreed discount</p>}
           <p>{b.room_types?.name}{b.room_number && ` · Room ${b.room_number}`} · {b.check_in} → {b.check_out} · {b.nights} night(s) · {b.guests} guest(s)</p>
         </div>
         <table className="mt-6 w-full text-sm">
