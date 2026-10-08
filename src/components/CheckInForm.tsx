@@ -20,6 +20,7 @@ function PhotoField({ label, facing, file, existing, onChange }: {
   useEffect(() => {
     if (file) { const u = URL.createObjectURL(file); setPreview(u); return () => URL.revokeObjectURL(u); }
     if (existing) supabase.storage.from("guest-docs").createSignedUrl(existing, 600).then(({ data }) => setPreview(data?.signedUrl ?? null));
+    return undefined;
   }, [file, existing]);
 
   async function open() {
