@@ -349,7 +349,7 @@ function Guests({ bookings }: { bookings: Booking[] }) {
                 <p className="flex-1 font-display text-xl text-primary">{g.name}<span className="ml-3 font-sans text-xs text-muted-foreground">{g.phone}</span></p>
                 <span className="text-xs">{done.length} stay{done.length === 1 ? "" : "s"}</span>
                 <span className="text-xs">{inr(spent)}</span>
-                <span className="text-xs text-muted-foreground">Last: {last.check_in}</span>
+                <span className="text-xs text-muted-foreground">Last: {last?.check_in}</span>
               </button>
               {open === g.key && (
                 <table className="mt-3 w-full text-xs">

@@ -19,10 +19,10 @@ Status legend: [x] done · [ ] pending · [~] in progress
 - [ ] Booking confirmation email (needs email domain setup)
 
 ## Phase 2 — Front desk / Property management
-- [~] Owner + front desk roles done (kitchen/housekeeping/finance roles exist, panels in later phases); staff invite UI pending
+- [x] Roles + owner Staff tab to give/remove access by email
 - [x] Occupancy calendar (14-day grid)
 - [x] Check-in / check-out, walk-ins, room number assignment
-- [~] Guest notes per booking (full profile history later)
+- [x] Guest notes + Guest history tab (all stays, total spent)
 - [x] Folio: room charge, extras, discounts
 
 ## Phase 3 — Payments, invoices, policies
