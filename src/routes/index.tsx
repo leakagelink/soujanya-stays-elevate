@@ -15,6 +15,7 @@ import hero from "@/assets/hero.jpg";
 import logoAsset from "@/assets/soujanya-logo.webp.asset.json";
 
 const logo = logoAsset.url;
+import { POLICIES, recordConsents } from "@/components/OpsExtras";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { roomsQuery, inr } from "@/lib/rooms";
@@ -55,6 +56,7 @@ function Index() {
   const [done, setDone] = useState<string | null>(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [wait, setWait] = useState<"" | "can" | "done">("");
   const nights = ci && co ? Math.max(0, (new Date(co).getTime() - new Date(ci).getTime()) / 864e5) : 0;
   const r = rooms.find((x) => x.name === room) ?? rooms[0];
@@ -65,13 +67,14 @@ function Index() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !r || nights <= 0) return;
+    if (!agree) { setErr("Please accept the resort policies to continue."); return; }
     setBusy(true); setErr("");
     const { data, error } = await supabase.from("bookings").insert({
       user_id: user.id, room_type_id: r.id, guest_name: name, phone, check_in: ci, check_out: co, guests,
       nights: 0, subtotal: 0, gst: 0, total: 0,
     }).select("id").single();
     setBusy(false);
-    if (error) { setErr(error.message); setWait(error.message.includes("No rooms") ? "can" : ""); } else setDone(data.id);
+    if (error) { setErr(error.message); setWait(error.message.includes("No rooms") ? "can" : ""); } else { await recordConsents(user.id, data.id, POLICIES.map(([k]) => k)); setDone(data.id); }
   }
   async function joinWaitlist() {
     if (!user || !r) return;
@@ -169,6 +172,7 @@ function Index() {
               <label className="home-kicker text-primary">Full name<input required autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} className="form-input" /></label>
               <label className="home-kicker text-primary">Phone<input required type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="form-input" /></label>
               {err && <p role="alert" className="text-sm text-destructive sm:col-span-2">{err}</p>}
+              <label className="flex items-start gap-2 text-xs sm:col-span-2"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5" /><span>I accept the {POLICIES.map(([, l]) => l).join(", ")}.</span></label>
               {wait === "can" && <button type="button" onClick={joinWaitlist} className="booking-input sm:col-span-2 text-xs tracking-widest">JOIN WAITLIST — WE WILL CALL YOU IF A ROOM OPENS</button>}
               {wait === "done" && <p className="text-sm sm:col-span-2">You are on the waitlist. We will contact you if a room opens.</p>}
               {user ? <Button type="submit" disabled={busy || !r || nights <= 0} className="home-cta mt-2 w-full sm:col-span-2">{busy ? "SAVING…" : "REQUEST BOOKING"} <ArrowRight /></Button> : <Button asChild className="home-cta mt-2 w-full sm:col-span-2"><Link to="/auth">SIGN IN TO BOOK <ArrowRight /></Link></Button>}

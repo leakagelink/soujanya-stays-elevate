@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { recordConsents } from "@/components/OpsExtras";
 import { supabase } from "@/integrations/supabase/client";
 
 type B = {
@@ -19,7 +20,7 @@ function PhotoField({ label, facing, file, existing, onChange }: {
 
   useEffect(() => {
     if (file) { const u = URL.createObjectURL(file); setPreview(u); return () => URL.revokeObjectURL(u); }
-    if (existing) supabase.storage.from("guest-docs").createSignedUrl(existing, 600).then(({ data }) => setPreview(data?.signedUrl ?? null));
+    if (existing) supabase.rpc("log_doc_access", { _booking_id: existing.split("/")[0]!, _path: existing }).then(() => supabase.storage.from("guest-docs").createSignedUrl(existing, 600)).then(({ data }) => setPreview(data?.signedUrl ?? null));
     return undefined;
   }, [file, existing]);
 
@@ -72,8 +73,9 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
     guest_name: booking.guest_name, phone: booking.phone, email: booking.email ?? "", address: booking.address ?? "",
     nationality: booking.nationality || "Indian", id_type: booking.id_type || "Aadhaar", id_number: booking.id_number ?? "",
     adults: booking.guests, children: 0, coming_from: "", going_to: "", purpose: "Leisure", vehicle_number: "", visa_number: "",
-    room_number: booking.room_number,
+    room_number: booking.room_number, id_verification: (booking as { id_verification?: string }).id_verification ?? "pending",
   });
+  const [declared, setDeclared] = useState(false);
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [front, setFront] = useState<Blob | null>(null);
   const [back, setBack] = useState<Blob | null>(null);
@@ -97,6 +99,7 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
       return setErr("Name, phone, address, ID number and room number are required.");
     if (!photo && !booking.guest_photo_path) return setErr("Guest photo is required.");
     if (!front && !booking.id_front_path) return setErr("ID card front photo is required.");
+    if (!declared) return setErr("Guest must confirm the declaration.");
     if (foreign && !f.visa_number.trim()) return setErr("Visa number is required for foreign guests.");
     setBusy(true);
     try {
@@ -107,6 +110,8 @@ export function CheckInForm({ booking, onDone, onClose }: { booking: B; onDone: 
         status: "checked_in", checked_in_at: new Date().toISOString(),
       }).eq("id", booking.id);
       if (error) throw error;
+      const { data: own } = await supabase.from("bookings").select("user_id").eq("id", booking.id).single();
+      if (own) await recordConsents(own.user_id, booking.id, ["guest_declaration", "resort_rules"]);
       onDone();
     } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   }
