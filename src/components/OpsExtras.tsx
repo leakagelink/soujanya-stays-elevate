@@ -17,7 +17,8 @@ export const POLICIES = [
 /** Save one consent row per policy for a booking. */
 export async function recordConsents(userId: string, bookingId: string, policies: string[]) {
   const { data: u } = await supabase.auth.getUser();
-  return supabase.from("consents").insert(policies.map((p) => ({ user_id: userId, booking_id: bookingId, policy: p, version: POLICY_VERSION, recorded_by: u.user!.id })));
+  if (!u.user) return { error: new Error("Please sign in to record policy acceptance.") };
+  return supabase.from("consents").insert(policies.map((p) => ({ user_id: userId, booking_id: bookingId, policy: p, version: POLICY_VERSION, recorded_by: u.user.id })));
 }
 
 export function FolioSummary({ bookingId, room, refreshKey }: { bookingId: string; room: number; refreshKey: number }) {

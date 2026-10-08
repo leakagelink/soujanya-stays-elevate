@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as FinanceRouteImport } from './routes/finance'
+import { Route as GuestRouteImport } from './routes/guest'
 import { Route as HousekeepingRouteImport } from './routes/housekeeping'
 import { Route as KitchenRouteImport } from './routes/kitchen'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
@@ -38,6 +39,11 @@ const AuthRoute = AuthRouteImport.update({
 const FinanceRoute = FinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuestRoute = GuestRouteImport.update({
+  id: '/guest',
+  path: '/guest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HousekeepingRoute = HousekeepingRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/finance': typeof FinanceRoute
+  '/guest': typeof GuestRoute
   '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/finance': typeof FinanceRoute
+  '/guest': typeof GuestRoute
   '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/finance': typeof FinanceRoute
+  '/guest': typeof GuestRoute
   '/housekeeping': typeof HousekeepingRoute
   '/kitchen': typeof KitchenRoute
   '/my-bookings': typeof MyBookingsRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/finance'
+    | '/guest'
     | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/finance'
+    | '/guest'
     | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/finance'
+    | '/guest'
     | '/housekeeping'
     | '/kitchen'
     | '/my-bookings'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   FinanceRoute: typeof FinanceRoute
+  GuestRoute: typeof GuestRoute
   HousekeepingRoute: typeof HousekeepingRoute
   KitchenRoute: typeof KitchenRoute
   MyBookingsRoute: typeof MyBookingsRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/finance'
       fullPath: '/finance'
       preLoaderRoute: typeof FinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guest': {
+      id: '/guest'
+      path: '/guest'
+      fullPath: '/guest'
+      preLoaderRoute: typeof GuestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/housekeeping': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   FinanceRoute: FinanceRoute,
+  GuestRoute: GuestRoute,
   HousekeepingRoute: HousekeepingRoute,
   KitchenRoute: KitchenRoute,
   MyBookingsRoute: MyBookingsRoute,
