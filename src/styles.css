@@ -274,3 +274,36 @@
 @media (max-width: 1023px) { .guest-layout { display: block; } .guest-sidebar { display: none; } .guest-main { padding-bottom: 110px; } .guest-bottom-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; padding: 8px 8px max(8px,env(safe-area-inset-bottom)); } .guest-nav-item { flex-direction: column; gap: 5px; font-size: 10px; height: 54px; white-space: normal; padding: 4px; text-align: center; } .guest-app.panel-page { padding-block: 0; } }
 @media (max-width: 639px) { .guest-container { width: calc(100% - 32px); } .guest-header .panel-header { min-height: 72px; } .guest-main { padding-top: 24px; } .guest-heading { font-size: 36px; } .guest-hero { height: 300px; } .guest-hero-copy { left: 24px; right: 24px; } .guest-hero-copy h2 { font-size: 40px; } .guest-quick-actions { gap: 0; } .guest-quick-action { font-size: 11px; padding-inline: 2px; white-space: normal; } .guest-room-grid, .guest-promo-grid { grid-template-columns: minmax(0,1fr); gap: 20px; } .guest-stay-strip { grid-template-columns: auto minmax(0,1fr); } .guest-stay-strip > a { grid-column: 2; justify-self: start; } .guest-booking-modal { padding: 20px; } .guest-service-title { font-size: 32px; left: 20px; bottom: 20px; } }
 @media (prefers-reduced-motion: reduce) { .guest-app *, .guest-app *::before, .guest-app *::after { animation: none !important; transition: none !important; } }
+
+/* Branded splash: shown once per session on first load. */
+html.splash-lock { overflow: hidden; }
+.brand-splash {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(120% 90% at 50% 8%, color-mix(in oklab, var(--gold) 10%, transparent), transparent 55%),
+    color-mix(in oklab, var(--primary) 97%, black);
+  color: var(--ivory);
+  transition: opacity .65s ease, transform .65s ease, visibility .65s;
+}
+.brand-splash::after {
+  content: ""; position: absolute; inset: 18px;
+  border: 1px solid color-mix(in oklab, var(--gold) 28%, transparent);
+  pointer-events: none;
+}
+.brand-splash-leaving { opacity: 0; transform: scale(1.045); pointer-events: none; visibility: hidden; }
+.brand-splash-inner { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; }
+.brand-splash-emblem { position: relative; width: 128px; height: 128px; display: grid; place-items: center; animation: splash-logo-in 1s cubic-bezier(.22,.9,.3,1) both; }
+.brand-splash-logo { width: 104px; height: 104px; border-radius: 50%; box-shadow: 0 18px 48px color-mix(in oklab, black 35%, transparent); }
+.brand-splash-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--gold) 55%, transparent); animation: splash-ring 2.4s ease-out infinite; }
+.brand-splash-ring-slow { animation-duration: 2.4s; animation-delay: .55s; }
+.brand-splash-title { margin-top: 30px; display: flex; gap: .55em; font-size: 34px; line-height: 1; }
+.brand-splash-word { animation: splash-rise .9s cubic-bezier(.22,.9,.3,1) .35s both; }
+.brand-splash-word-accent { color: var(--gold); font-style: italic; animation-delay: .5s; }
+.brand-splash-tagline { margin-top: 12px; font-size: 11px; letter-spacing: .42em; text-indent: .42em; color: color-mix(in oklab, var(--ivory) 72%, transparent); animation: splash-rise .9s cubic-bezier(.22,.9,.3,1) .65s both; }
+.brand-splash-line { margin-top: 28px; width: 180px; height: 1px; background: color-mix(in oklab, var(--ivory) 18%, transparent); overflow: hidden; }
+.brand-splash-line span { display: block; height: 100%; background: var(--gold); transform-origin: left; animation: splash-line 1.6s cubic-bezier(.65,0,.35,1) .5s both; }
+@keyframes splash-logo-in { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: scale(1); } }
+@keyframes splash-ring { 0% { transform: scale(.68); opacity: .9; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes splash-rise { from { opacity: 0; transform: translateY(16px); letter-spacing: .3em; } to { opacity: 1; transform: translateY(0); letter-spacing: .08em; } }
+@keyframes splash-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
