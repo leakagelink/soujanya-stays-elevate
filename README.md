@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Soujanya Stays Experience
+
+Build a complete production-grade luxury resort booking, property-management, guest-experience, food-ordering, staff-management and business-analytics platform called SOUJANYA STAYS according to the attached specification.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://soujanya-stays-elevate.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/f3033f76-67a4-41fb-85d2-b418cb1b7ee6).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
